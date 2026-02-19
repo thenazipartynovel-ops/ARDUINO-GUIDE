@@ -53,9 +53,20 @@
   }
   .nav-logo span { color: var(--accent2); }
   .nav-links {
-    display: flex; gap: .25rem;
+    display: flex; gap: .15rem;
     list-style: none;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,212,255,.3) transparent;
+    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    max-width: calc(100vw - 200px);
+    flex-shrink: 1;
   }
+  .nav-links::-webkit-scrollbar { height: 3px; }
+  .nav-links::-webkit-scrollbar-track { background: transparent; }
+  .nav-links::-webkit-scrollbar-thumb { background: rgba(0,212,255,.3); border-radius: 2px; }
   .nav-links a {
     color: var(--muted);
     text-decoration: none;
@@ -1141,36 +1152,110 @@
     opacity: 0; pointer-events: none;
     display: flex; align-items: center; justify-content: center;
   }
-  .back-top.show { opacity: 1; pointer-events: auto; }
-  .back-top:hover { background: #6d28d9; transform: translateY(-3px); }
+  /* ── READING PROGRESS BAR (inside nav, at bottom edge) ── */
+  #readProgress {
+    position: absolute; bottom: 0; left: 0; height: 2px; width: 0%;
+    background: linear-gradient(90deg, #00d4ff 0%, #7c3aed 50%, #ff6b35 100%);
+    z-index: 10001; transition: width 0.15s linear;
+    box-shadow: 0 0 6px rgba(0,212,255,.8);
+    pointer-events: none;
+  }
+
+  /* ── COPY BUTTON ON CODE BLOCKS ── */
+  .code-block-wrap { position: relative; }
+  .code-copy-btn {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.3);
+    color: var(--accent); border-radius: 6px; padding: .25rem .6rem;
+    font-family: 'Space Mono', monospace; font-size: .65rem; cursor: pointer;
+    transition: all .2s; opacity: 0; z-index: 5;
+  }
+  .code-block-wrap:hover .code-copy-btn { opacity: 1; }
+  .code-copy-btn:hover { background: rgba(0,212,255,.25); }
+  .code-copy-btn.copied { color: var(--green); border-color: rgba(0,255,136,.4); }
+
+  /* ── BOARD ANATOMY CHAPTER ── */
+  .board-anatomy-wrap, .ide-anatomy-wrap {
+    background: var(--card); border-radius: 20px; padding: 2rem;
+  }
+  .board-part-detail {
+    background: rgba(0,212,255,.04); border: 1px solid rgba(0,212,255,.15);
+    border-radius: 14px; padding: 1.25rem; min-height: 220px;
+  }
+  .bpd-icon { font-size: 2.5rem; margin-bottom: .5rem; }
+  .bpd-name { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: .2rem; }
+  .bpd-type { font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .5rem; }
+  .bpd-analogy { background: rgba(0,212,255,.06); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: .75rem 1rem; }
+  .bpd-specs { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .bpd-spec-tag { background: rgba(0,212,255,.1); border: 1px solid rgba(0,212,255,.2); border-radius: 20px; padding: .2rem .6rem; font-family: 'Space Mono', monospace; font-size: .65rem; color: var(--accent); }
+
+  /* ── BOARD/IDE PART CARDS ── */
+  .bpart-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 1.25rem; cursor: pointer; transition: all .25s;
+    position: relative; overflow: hidden;
+  }
+  .bpart-card::before { content:''; position:absolute; inset:0; background:var(--accent); opacity:0; transition: opacity .25s; border-radius: 14px; }
+  .bpart-card:hover { border-color: rgba(0,212,255,.4); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,212,255,.12); }
+  .bpart-card:hover::before { opacity: .03; }
+  .bpart-card.ide-card:hover { border-color: rgba(124,58,237,.4); box-shadow: 0 6px 24px rgba(124,58,237,.12); }
+  .bpart-card.ide-card::before { background: var(--accent3); }
+  .bpart-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .75rem; }
+  .bpart-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .bpart-name { font-weight: 700; font-size: .95rem; }
+  .bpart-sub { font-family: 'Space Mono', monospace; font-size: .6rem; color: var(--muted); text-transform: uppercase; }
+  .bpart-desc { font-size: .82rem; color: var(--muted); line-height: 1.55; margin-bottom: .75rem; }
+  .bpart-analogy { font-size: .78rem; color: var(--text); font-style: italic; padding: .5rem .75rem; background: rgba(0,212,255,.05); border-left: 2px solid var(--accent); border-radius: 0 6px 6px 0; }
+  .bpart-card.ide-card .bpart-analogy { background: rgba(124,58,237,.05); border-left-color: var(--accent3); }
+
+  /* ── IDE STEP CARDS ── */
+  .ide-step-card {
+    background: rgba(0,0,0,.2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.25rem; text-align: center; transition: all .3s;
+  }
+  .ide-step-card:hover { border-color: rgba(124,58,237,.4); box-shadow: 0 4px 16px rgba(124,58,237,.15); transform: translateY(-2px); }
+
+  /* ── REVEAL CSS ── */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .55s ease, transform .55s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── NAV ACTIVE ── */
+  .nav-links a.active { color: var(--accent); background: rgba(0,212,255,.1); }
 </style>
 </head>
 <body>
-
 <!-- NAV -->
 <nav>
   <div class="nav-logo">⚡ <span>ARDUINO</span>.guide</div>
   <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('open');this.textContent=this.closest('nav').querySelector('.nav-links').classList.contains('open')?'✕':'☰'">☰</button>
   <ul class="nav-links">
+    <li><a href="#boardanatomy">🔬 Board</a></li>
+    <li><a href="#ideanatomy">💻 IDE</a></li>
     <li><a href="#basics">Basics</a></li>
     <li><a href="#components">Parts</a></li>
     <li><a href="#circuits">Circuits</a></li>
-    <li><a href="#code">Code</a></li>
+    <li><a href="#code">Simulator</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#coding101">C++ 101</a></li>
+    <li><a href="#variables">Variables</a></li>
+    <li><a href="#controlflow">Control</a></li>
+    <li><a href="#functions">Functions</a></li>
+    <li><a href="#arrays">Arrays</a></li>
+    <li><a href="#timing">Timing</a></li>
+    <li><a href="#libraries">Libraries</a></li>
+    <li><a href="#operators">Operators</a></li>
+    <li><a href="#strings">Strings</a></li>
+    <li><a href="#debugging">Debug</a></li>
+    <li><a href="#serial">Serial</a></li>
+    <li><a href="#interrupts">Interrupts</a></li>
+    <li><a href="#protocols">I2C/SPI</a></li>
+    <li><a href="#memory">Memory</a></li>
     <li><a href="#projects">Projects</a></li>
-    <li><a href="#coding101">Ch.08</a></li>
-    <li><a href="#variables">Ch.09</a></li>
-    <li><a href="#controlflow">Ch.10</a></li>
-    <li><a href="#functions">Ch.11</a></li>
-    <li><a href="#arrays">Ch.12</a></li>
-    <li><a href="#timing">Ch.13</a></li>
-    <li><a href="#libraries">Ch.14</a></li>
-    <li><a href="#operators">Ch.15</a></li>
-    <li><a href="#strings">Ch.16</a></li>
-    <li><a href="#debugging">Ch.17</a></li>
-    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#quiz">🏆 Quiz</a></li>
   </ul>
+  <div id="readProgress"></div>
+  <div id="readProgress"></div>
 </nav>
-<div class="progress-bar" id="progressBar"></div>
 
 <!-- HERO -->
 <section id="hero" style="max-width:100%; padding-top:100px;">
@@ -1230,7 +1315,108 @@
     <div class="stat"><div class="stat-num">20</div><div class="stat-label">Quiz Questions</div></div>
   </div>
 </section>
+<div class="section-divider"></div>
 
+<!-- ══════════════════════════ SECTION: ARDUINO BOARD ANATOMY ══════════════════════════ -->
+<section id="boardanatomy">
+  <div class="section-tag">Chapter 18</div>
+  <h2 class="section-title">🔬 Arduino Board Anatomy</h2>
+  <p class="section-sub">Every single component on the board — what it is, what it does, and an analogy you'll never forget.</p>
+
+  <!-- Interactive board diagram -->
+  <div class="board-anatomy-wrap card" style="margin-bottom:2rem;">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <h3 style="font-size:1.1rem;margin:0 0 .5rem;">🖱️ Click any part to learn about it</h3>
+      <p style="color:var(--muted);font-size:.8rem;margin:0;">Hover to highlight — click for full explanation + analogy</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;">
+      <!-- SVG Board -->
+      <div style="position:relative;">
+        <canvas id="boardAnatCanvas" width="380" height="280" style="width:100%;border-radius:12px;cursor:pointer;display:block;"></canvas>
+        <div id="boardPartName" style="text-align:center;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent);margin-top:.5rem;min-height:1.2em;"></div>
+      </div>
+      <!-- Detail panel -->
+      <div id="boardPartDetail" class="board-part-detail">
+        <div class="bpd-icon" id="bpdIcon">🎯</div>
+        <div class="bpd-name" id="bpdName">Select a part</div>
+        <div class="bpd-type" id="bpdType">Click any highlighted component</div>
+        <div class="bpd-desc" id="bpdDesc" style="color:var(--muted);font-size:.85rem;margin:.75rem 0;">Hover over the board diagram on the left and click a component to see its full description here.</div>
+        <div class="bpd-analogy" id="bpdAnalogy" style="display:none;">
+          <div style="font-size:.65rem;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;">💡 Analogy</div>
+          <div id="bpdAnalogyText" style="font-size:.85rem;color:var(--text);font-style:italic;"></div>
+        </div>
+        <div class="bpd-specs" id="bpdSpecs" style="display:none;margin-top:.75rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All parts cards grid -->
+  <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--accent);">📋 Complete Parts Reference</h3>
+  <div id="boardPartsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;"></div>
+</section>
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════ SECTION: ARDUINO IDE ANATOMY ══════════════════════════ -->
+<section id="ideanatomy">
+  <div class="section-tag">Chapter 19</div>
+  <h2 class="section-title">💻 Arduino IDE Anatomy</h2>
+  <p class="section-sub">Every button, panel, and menu in the IDE — fully explained with analogies and interactive demos.</p>
+
+  <!-- IDE Preview with clickable zones -->
+  <div class="ide-anatomy-wrap card" style="margin-bottom:2rem;">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <h3 style="font-size:1.1rem;margin:0 0 .5rem;">🖱️ Click any IDE element to learn what it does</h3>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;">
+      <!-- IDE visual mockup -->
+      <div>
+        <canvas id="ideAnatCanvas" width="380" height="320" style="width:100%;border-radius:8px;cursor:pointer;display:block;border:1px solid var(--border);"></canvas>
+        <div id="idePartName" style="text-align:center;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent3);margin-top:.5rem;min-height:1.2em;"></div>
+      </div>
+      <!-- Detail panel -->
+      <div id="idePartDetail" class="board-part-detail" style="border-color:rgba(124,58,237,.3);">
+        <div class="bpd-icon" id="ipdIcon">💻</div>
+        <div class="bpd-name" id="ipdName">Select a part</div>
+        <div class="bpd-type" id="ipdType" style="color:var(--accent3)">Click any IDE element</div>
+        <div class="bpd-desc" id="ipdDesc" style="color:var(--muted);font-size:.85rem;margin:.75rem 0;">Click any highlighted area in the IDE mockup to see what it does and get tips for using it.</div>
+        <div class="bpd-analogy" id="ipdAnalogy" style="display:none;">
+          <div style="font-size:.65rem;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem;">💡 Analogy</div>
+          <div id="ipdAnalogyText" style="font-size:.85rem;color:var(--text);font-style:italic;"></div>
+        </div>
+        <div class="bpd-tips" id="ipdTips" style="display:none;margin-top:.75rem;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDE Workflow Simulator -->
+  <div class="card" style="margin-bottom:2rem;">
+    <h3 style="margin:0 0 1rem;font-size:1rem;">⚡ Write → Verify → Upload Workflow</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+      <div class="ide-step-card" data-step="0">
+        <div style="font-size:2rem;text-align:center;margin-bottom:.5rem;">✍️</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent);margin-bottom:.3rem;">Step 1</div>
+        <div style="font-weight:700;margin-bottom:.5rem;">Write Code</div>
+        <div style="font-size:.8rem;color:var(--muted);">Type your sketch in the editor. Arduino saves it in a folder with the same name as your sketch.</div>
+      </div>
+      <div class="ide-step-card" data-step="1">
+        <div style="font-size:2rem;text-align:center;margin-bottom:.5rem;">✅</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#ffd700;margin-bottom:.3rem;">Step 2</div>
+        <div style="font-weight:700;margin-bottom:.5rem;">Verify (Compile)</div>
+        <div style="font-size:.8rem;color:var(--muted);">Click ✓ to check for errors. The IDE translates your code to machine language the Arduino understands.</div>
+      </div>
+      <div class="ide-step-card" data-step="2">
+        <div style="font-size:2rem;text-align:center;margin-bottom:.5rem;">🚀</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);margin-bottom:.3rem;">Step 3</div>
+        <div style="font-weight:700;margin-bottom:.5rem;">Upload</div>
+        <div style="font-size:.8rem;color:var(--muted);">Click → to compile AND upload. Arduino resets, runs your new code automatically.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All IDE parts cards -->
+  <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--accent3);">📋 Complete IDE Reference</h3>
+  <div id="idePartsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;"></div>
+</section>
 <div class="section-divider"></div>
 
 <!-- ══════════════════════════════ SECTION 1 — BASICS ══════════════════════════════ -->
@@ -1284,7 +1470,6 @@
     <div class="tip-text"><strong>Did you know?</strong> "Arduino" is named after a bar in Ivrea, Italy where the founders used to meet. The word itself is a medieval Italian name meaning "strong friend." Your circuit's best friend indeed!</div>
   </div>
 </section>
-
 <div class="section-divider"></div>
 
 <!-- ══════════════════════════════ SECTION 2 — COMPONENTS ══════════════════════════════ -->
@@ -1332,7 +1517,6 @@
     </div>
   </div>
 </section>
-
 <div class="section-divider"></div>
 
 <!-- ══════════════════════════════ SECTION 3 — CIRCUITS ══════════════════════════════ -->
@@ -1381,7 +1565,6 @@
     <div class="tip-text"><strong>Safety Rule #1:</strong> Always use a resistor with an LED! Without one, too much current flows and the LED (and possibly the Arduino pin) will burn out. A 220Ω–1kΩ resistor is typical for a 5V system.</div>
   </div>
 </section>
-
 <div class="section-divider"></div>
 
 <!-- ══════════════════════════════ SECTION 4 — CODE ══════════════════════════════ -->
@@ -1467,7 +1650,6 @@
     </div>
   </div>
 </section>
-
 <div class="section-divider"></div>
 
 <!-- ══════════════════════════════ SECTION 5 — STEP BUILDER ══════════════════════════════ -->
@@ -1480,55 +1662,6 @@
     <!-- JS renders -->
   </div>
 </section>
-
-<div class="section-divider"></div>
-
-<!-- ══════════════════════════════ SECTION 6 — PROJECTS ══════════════════════════════ -->
-<section id="projects">
-  <div class="section-tag">Chapter 06</div>
-  <h2 class="section-title">Beginner <em>Projects</em></h2>
-  <p class="section-sub">Real projects you can build today. Start with Blink, work your way up to the weather station. Each project teaches a new skill.</p>
-
-  <div class="projects-grid" id="projectsGrid">
-    <!-- JS renders -->
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ══════════════════════════════ SECTION 7 — QUIZ ══════════════════════════════ -->
-<section id="quiz">
-  <div class="section-tag">Chapter 07</div>
-  <h2 class="section-title">Test Your <em>Knowledge</em></h2>
-  <p class="section-sub">20 questions covering everything in this guide. See how much you've learned!</p>
-
-  <div class="quiz-container">
-    <div id="quizMain">
-      <div class="quiz-header">
-        <span class="quiz-question-num" id="qNum">Question 1 / 20</span>
-        <div class="quiz-progress-wrap">
-          <div class="quiz-progress-label" id="qProgressLabel">0% complete</div>
-          <div class="quiz-progress-track">
-            <div class="quiz-progress-fill" id="qProgressFill" style="width:0%"></div>
-          </div>
-        </div>
-        <div class="quiz-score-badge">Score: <span id="qScore">0</span></div>
-      </div>
-      <div class="quiz-q" id="quizQuestion"></div>
-      <div class="quiz-options" id="quizOptions"></div>
-      <div class="quiz-feedback" id="quizFeedback"></div>
-      <button class="quiz-next" id="quizNextBtn" onclick="nextQuestion()">Next Question →</button>
-    </div>
-    <div class="quiz-complete" id="quizComplete">
-      <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
-      <div class="quiz-final-score" id="finalScore"></div>
-      <div class="quiz-final-msg" id="finalMsg"></div>
-      <button class="quiz-restart" onclick="restartQuiz()">🔄 Retake Quiz</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════════ CH08 — CODING 101: ANALOGIES ══════════════ -->
 <div class="section-divider"></div>
 <section id="coding101">
   <div class="section-tag new-chapter-tag">Chapter 08 · NEW</div>
@@ -1663,8 +1796,6 @@
     <p style="color:var(--muted);font-size:.78rem;margin-top:.75rem;font-family:'Space Mono',monospace;">* Bars shown proportional to Flash size. Flash:SRAM:EEPROM = 32:2:1 KB</p>
   </div>
 </section>
-
-<!-- ══════════════ CH09 — VARIABLES & DATA TYPES ══════════════ -->
 <div class="section-divider"></div>
 <section id="variables">
   <div class="section-tag new-chapter-tag">Chapter 09 · NEW</div>
@@ -1771,8 +1902,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH10 — CONTROL FLOW ══════════════ -->
 <div class="section-divider"></div>
 <section id="controlflow">
   <div class="section-tag new-chapter-tag">Chapter 10 · NEW</div>
@@ -1875,8 +2004,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH11 — FUNCTIONS ══════════════ -->
 <div class="section-divider"></div>
 <section id="functions">
   <div class="section-tag new-chapter-tag">Chapter 11 · NEW</div>
@@ -1966,8 +2093,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH12 — ARRAYS ══════════════ -->
 <div class="section-divider"></div>
 <section id="arrays">
   <div class="section-tag new-chapter-tag">Chapter 12 · NEW</div>
@@ -2034,8 +2159,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH13 — TIMING & MILLIS ══════════════ -->
 <div class="section-divider"></div>
 <section id="timing">
   <div class="section-tag new-chapter-tag">Chapter 13 · NEW</div>
@@ -2177,8 +2300,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH14 — LIBRARIES ══════════════ -->
 <div class="section-divider"></div>
 <section id="libraries">
   <div class="section-tag new-chapter-tag">Chapter 14 · NEW</div>
@@ -2294,8 +2415,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH15 — OPERATORS & MATH ══════════════ -->
 <div class="section-divider"></div>
 <section id="operators">
   <div class="section-tag new-chapter-tag">Chapter 15 · NEW</div>
@@ -2376,8 +2495,6 @@
     <div class="tip-text"><strong>map() vs constrain():</strong> <code style="color:var(--accent)">map(val, 0,1023, 0,255)</code> rescales a number from one range to another. <code style="color:var(--accent)">constrain(val, 0,255)</code> clamps a value so it never goes below 0 or above 255. Use both together: <code style="color:var(--accent)">constrain(map(val,0,1023,0,255), 0,255)</code> for safe PWM output.</div>
   </div>
 </section>
-
-<!-- ══════════════ CH16 — STRINGS & SERIAL ══════════════ -->
 <div class="section-divider"></div>
 <section id="strings">
   <div class="section-tag new-chapter-tag">Chapter 16 · NEW</div>
@@ -2480,8 +2597,6 @@
     </div>
   </div>
 </section>
-
-<!-- ══════════════ CH17 — DEBUGGING ══════════════ -->
 <div class="section-divider"></div>
 <section id="debugging">
   <div class="section-tag new-chapter-tag">Chapter 17 · NEW</div>
@@ -2674,6 +2789,367 @@ error: invalid conversion from 'int*' to 'int'" oninput="diagnoseError()"></text
   </div>
 </section>
 
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════ CHAPTER 20 — SERIAL COMMUNICATION ══════════════════════════════ -->
+<section id="serial">
+  <div class="section-tag">Chapter 20</div>
+  <h2 class="section-title">📡 Serial Communication</h2>
+  <p class="section-sub">How Arduino talks to your computer — and how to use it for debugging, sensors, and control.</p>
+
+  <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+    <div class="card">
+      <div class="card-icon">🔤</div>
+      <h3>What is Serial?</h3>
+      <p>Serial is how Arduino sends text and data to your computer one bit at a time. The Serial Monitor in the IDE receives it. Think of it like a telegraph — dots and dashes (bits) become readable text.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Baud Rate</h3>
+      <p>Baud rate = bits per second. Both sides must match. <code style="color:var(--accent)">Serial.begin(9600)</code> is standard. If text looks garbled, you have a baud mismatch — like two people speaking at different speeds.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🐛</div>
+      <h3>Serial for Debugging</h3>
+      <p>Serial.println() is your best debugging tool. Print variable values, sensor readings, and state changes. It's like adding console.log() to your hardware — tells you what's happening in real time.</p>
+    </div>
+  </div>
+
+  <!-- Serial code examples -->
+  <div style="margin-top:2rem;">
+    <h3 style="margin-bottom:1rem;font-size:1rem;color:var(--accent);">📋 Essential Serial Functions</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;">
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>🚀 Basic Setup & Print</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="cmt">// In setup() — initialize Serial</span><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">setup</span>() {<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">begin</span>(<span class="num">9600</span>);&nbsp;&nbsp;<span class="cmt">// start at 9600 baud</span><br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(<span class="str">"Arduino ready!"</span>);<br>
+          }<br><br>
+          <span class="cmt">// Print text</span><br>
+          <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(<span class="str">"Value: "</span>);&nbsp;&nbsp;&nbsp;<span class="cmt">// no newline</span><br>
+          <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(sensorVal); <span class="cmt">// with newline</span>
+        </div>
+      </div>
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>📥 Reading from Serial</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="kw">void</span> <span style="color:#50fa7b;">loop</span>() {<br>
+          &nbsp;&nbsp;<span class="kw">if</span> (<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">available</span>() > <span class="num">0</span>) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="type">char</span> c = <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">read</span>();<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(<span class="str">"Got: "</span>);<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(c);<br>
+          &nbsp;&nbsp;}<br>
+          }<br><br>
+          <span class="cmt">// Read full line</span><br>
+          <span class="type">String</span> line = <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">readStringUntil</span>(<span class="str">'\n'</span>);
+        </div>
+      </div>
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>🌡️ Sensor Debug Pattern</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="kw">void</span> <span style="color:#50fa7b;">loop</span>() {<br>
+          &nbsp;&nbsp;<span class="type">int</span> raw = <span style="color:#50fa7b;">analogRead</span>(<span class="num">A0</span>);<br>
+          &nbsp;&nbsp;<span class="type">float</span> voltage = raw * (<span class="num">5.0</span> / <span class="num">1023.0</span>);<br><br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(<span class="str">"Raw:"</span>); <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(raw);<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(<span class="str">" V:"</span>); <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(voltage);<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">delay</span>(<span class="num">500</span>);<br>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Analogy card -->
+  <div class="analogy-card" style="margin-top:2rem;">
+    <div style="font-size:2rem;margin-bottom:.5rem;">📞</div>
+    <h3>The Telephone Analogy</h3>
+    <p>Serial.begin(9600) is like dialing in. The baud rate is your connection speed. Serial.println() is talking into the phone. Serial.available() checks if someone said something. Serial.read() picks up and listens. If baud rates don't match, it's like both people talking at different speeds — gibberish.</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════ CHAPTER 21 — INTERRUPTS ══════════════════════════════ -->
+<section id="interrupts">
+  <div class="section-tag">Chapter 21</div>
+  <h2 class="section-title">⚡ Interrupts</h2>
+  <p class="section-sub">Make Arduino respond instantly to events — without polling. The key to responsive, real-time code.</p>
+
+  <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+    <div class="card">
+      <div class="card-icon">🔔</div>
+      <h3>What's an Interrupt?</h3>
+      <p>An interrupt stops the main program instantly when something happens (button press, timer tick, sensor signal) — runs a special function, then returns exactly where it left off. No polling loop needed.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚨</div>
+      <h3>Interrupt Pins</h3>
+      <p>Uno has 2 hardware interrupt pins: <strong style="color:var(--accent)">Pin 2 (INT0)</strong> and <strong style="color:var(--accent)">Pin 3 (INT1)</strong>. These are the only pins that can trigger hardware interrupts. Other boards have more.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⏱️</div>
+      <h3>Trigger Modes</h3>
+      <p><strong>RISING</strong> — fires when pin goes LOW→HIGH. <strong>FALLING</strong> — fires HIGH→LOW. <strong>CHANGE</strong> — fires on any change. <strong>LOW</strong> — fires while pin stays LOW.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;">
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>🔔 attachInterrupt() — Button Counter</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="kw">volatile</span> <span class="type">int</span> count = <span class="num">0</span>;<br><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">setup</span>() {<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">begin</span>(<span class="num">9600</span>);<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">attachInterrupt</span>(<span style="color:#50fa7b;">digitalPinToInterrupt</span>(<span class="num">2</span>),<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buttonPressed, <span class="kw">FALLING</span>);<br>
+          }<br><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">buttonPressed</span>() {<br>
+          &nbsp;&nbsp;count++; <span class="cmt">// ISR — keep it short!</span><br>
+          }<br><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">loop</span>() {<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(count);<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">delay</span>(<span class="num">500</span>);<br>
+          }
+        </div>
+      </div>
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>⚠️ volatile + ISR Rules</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="cmt">// ALWAYS use volatile for ISR variables</span><br>
+          <span class="kw">volatile</span> <span class="type">bool</span> flag = <span class="kw">false</span>;<br><br>
+          <span class="cmt">// ISR rules: keep it SHORT</span><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">myISR</span>() {<br>
+          &nbsp;&nbsp;flag = <span class="kw">true</span>; <span class="cmt">// set flag, act in loop()</span><br>
+          &nbsp;&nbsp;<span class="cmt">// NO: Serial, delay, millis, Wire</span><br>
+          }<br><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">loop</span>() {<br>
+          &nbsp;&nbsp;<span class="kw">if</span> (flag) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;flag = <span class="kw">false</span>;<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="cmt">// do the actual work here</span><br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="analogy-card" style="margin-top:2rem;">
+    <div style="font-size:2rem;margin-bottom:.5rem;">🚨</div>
+    <h3>The Doorbell Analogy</h3>
+    <p>Without interrupts, you'd stand at your door and check every second if someone is there — that's polling, and it wastes time. An interrupt is like a doorbell — you do whatever you want, and when someone rings, you stop, answer the door, and come back. volatile tells the compiler "this variable can change any time, don't optimize it away."</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════ CHAPTER 22 — I2C & SPI ══════════════════════════════ -->
+<section id="protocols">
+  <div class="section-tag">Chapter 22</div>
+  <h2 class="section-title">🔗 I2C & SPI Protocols</h2>
+  <p class="section-sub">How Arduino communicates with sensors, displays, and peripherals — the two most common buses.</p>
+
+  <div class="cards-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+    <div class="card">
+      <div class="card-icon">🔗</div>
+      <h3>I2C (Wire library)</h3>
+      <p>Uses just 2 wires — <strong style="color:var(--accent)">SDA (A4)</strong> and <strong style="color:var(--accent)">SCL (A5)</strong> — to talk to up to 127 devices. Each device has a unique address (like 0x3C). Common for sensors and OLED displays.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>SPI (fast bus)</h3>
+      <p>Uses 4 wires — <strong style="color:var(--accent)">MOSI, MISO, SCK, CS</strong>. Much faster than I2C. Great for SD cards, displays, and high-speed ADCs. CS pin (chip select) chooses which device to talk to.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧩</div>
+      <h3>Which to use?</h3>
+      <p>Use <strong>I2C</strong> when you want fewer wires and have many slow devices (sensors). Use <strong>SPI</strong> when you need speed (displays, SD cards). Most modules tell you which protocol they use.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;">
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>🔗 I2C — Read a sensor (Wire)</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="kw">#include</span> <span class="str">&lt;Wire.h&gt;</span><br><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">setup</span>() {<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">begin</span>();        <span class="cmt">// join I2C bus</span><br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">begin</span>(<span class="num">9600</span>);<br>
+          }<br><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">loop</span>() {<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">requestFrom</span>(<span class="num">0x68</span>, <span class="num">2</span>); <span class="cmt">// ask device 0x68</span><br>
+          &nbsp;&nbsp;<span class="kw">while</span>(<span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">available</span>()) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="type">byte</span> b = <span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">read</span>();<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(b);<br>
+          &nbsp;&nbsp;}<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">delay</span>(<span class="num">500</span>);<br>
+          }
+        </div>
+      </div>
+
+      <div class="highlight-box board-code-block" style="position:relative;">
+        <h3>⚡ I2C Scanner — find device address</h3>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+          <span class="kw">#include</span> <span class="str">&lt;Wire.h&gt;</span><br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">setup</span>() {<br>
+          &nbsp;&nbsp;<span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">begin</span>(); <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">begin</span>(<span class="num">9600</span>);<br>
+          &nbsp;&nbsp;<span class="kw">for</span>(<span class="type">byte</span> a=<span class="num">1</span>; a&lt;<span class="num">127</span>; a++) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">beginTransmission</span>(a);<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>(<span style="color:#50fa7b;">Wire</span>.<span style="color:#50fa7b;">endTransmission</span>()==<span class="num">0</span>) {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(<span class="str">"Found: 0x"</span>);<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(a, <span class="kw">HEX</span>);<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+          &nbsp;&nbsp;}<br>
+          }<br>
+          <span class="kw">void</span> <span style="color:#50fa7b;">loop</span>(){}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="analogy-card" style="margin-top:2rem;">
+    <div style="font-size:2rem;margin-bottom:.5rem;">🏢</div>
+    <h3>The Office Intercom Analogy</h3>
+    <p>I2C is like a building intercom — one main line, everyone has an extension number (address), you dial the extension and talk. SPI is like a walkie-talkie channel — blazing fast but you need a separate radio for each person (chip select pin per device). I2C = fewer wires, less speed. SPI = more wires, maximum speed.</p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════ CHAPTER 23 — EEPROM & MEMORY ══════════════════════════════ -->
+<section id="memory">
+  <div class="section-tag">Chapter 23</div>
+  <h2 class="section-title">💾 Memory & EEPROM</h2>
+  <p class="section-sub">Arduino has 3 types of memory. Learn what each does, how to save data that survives power-off, and how not to run out.</p>
+
+  <!-- Memory types visual -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <h3 style="margin-bottom:1.25rem;">The 3 Memories of Arduino Uno</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;text-align:center;">
+      <div style="background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:12px;padding:1rem;">
+        <div style="font-size:1.8rem;">⚡</div>
+        <div style="font-weight:700;color:var(--accent);margin:.3rem 0;">Flash</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);">32 KB</div>
+        <div style="font-size:.78rem;margin-top:.5rem;">Stores your sketch (program code). Survives power off. Written when you upload. Read-only while running.</div>
+      </div>
+      <div style="background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.2);border-radius:12px;padding:1rem;">
+        <div style="font-size:1.8rem;">🏃</div>
+        <div style="font-weight:700;color:var(--accent3);margin:.3rem 0;">SRAM</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);">2 KB</div>
+        <div style="font-size:.78rem;margin-top:.5rem;">Working memory — variables, function calls, stack. Erased on power off. This is the one you'll run out of first.</div>
+      </div>
+      <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:12px;padding:1rem;">
+        <div style="font-size:1.8rem;">💾</div>
+        <div style="font-weight:700;color:var(--green);margin:.3rem 0;">EEPROM</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);">1 KB</div>
+        <div style="font-size:.78rem;margin-top:.5rem;">Permanent storage — survives power off. Write up to 100,000 times. Use for settings, high scores, calibration.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-top:1rem;">
+
+    <div class="highlight-box board-code-block" style="position:relative;">
+      <h3>💾 EEPROM Read & Write</h3>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+        <span class="kw">#include</span> <span class="str">&lt;EEPROM.h&gt;</span><br><br>
+        <span class="cmt">// Write a byte to address 0</span><br>
+        <span style="color:#50fa7b;">EEPROM</span>.<span style="color:#50fa7b;">write</span>(<span class="num">0</span>, <span class="num">42</span>);<br><br>
+        <span class="cmt">// Read it back</span><br>
+        <span class="type">byte</span> val = <span style="color:#50fa7b;">EEPROM</span>.<span style="color:#50fa7b;">read</span>(<span class="num">0</span>);<br><br>
+        <span class="cmt">// Write only if changed (saves wear)</span><br>
+        <span style="color:#50fa7b;">EEPROM</span>.<span style="color:#50fa7b;">update</span>(<span class="num">0</span>, newVal);<br><br>
+        <span class="cmt">// Store any type with put/get</span><br>
+        <span class="type">float</span> f = <span class="num">3.14</span>;<br>
+        <span style="color:#50fa7b;">EEPROM</span>.<span style="color:#50fa7b;">put</span>(<span class="num">0</span>, f);<br>
+        <span style="color:#50fa7b;">EEPROM</span>.<span style="color:#50fa7b;">get</span>(<span class="num">0</span>, f);
+      </div>
+    </div>
+
+    <div class="highlight-box board-code-block" style="position:relative;">
+      <h3>📉 Save SRAM with F() Macro</h3>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;line-height:1.9;margin-top:.75rem;">
+        <span class="cmt">// BAD — string lives in SRAM (scarce)</span><br>
+        <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(<span class="str">"Hello Arduino!"</span>);<br><br>
+        <span class="cmt">// GOOD — F() keeps it in Flash (32KB)</span><br>
+        <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(<span style="color:#50fa7b;">F</span>(<span class="str">"Hello Arduino!"</span>));<br><br>
+        <span class="cmt">// Also works with print, printf</span><br>
+        <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">print</span>(<span style="color:#50fa7b;">F</span>(<span class="str">"Sensor value: "</span>));<br>
+        <span style="color:#50fa7b;">Serial</span>.<span style="color:#50fa7b;">println</span>(sensorVal);<br><br>
+        <span class="cmt">// Check free SRAM</span><br>
+        <span class="type">int</span> freeRam = <span style="color:#50fa7b;">freeMemory</span>();
+      </div>
+    </div>
+
+  </div>
+
+  <div class="analogy-card" style="margin-top:2rem;">
+    <div style="font-size:2rem;margin-bottom:.5rem;">📚</div>
+    <h3>The Library Analogy</h3>
+    <p>Flash is like a printed book — your program. SRAM is your desk — where you do the actual work, keep your current variables, and take notes. It's small and gets cleared when you go home. EEPROM is a sticky note pad you can take home — writes a bit slowly, survives power-off, but only has limited re-writes before it wears out.</p>
+  </div>
+</section>
+
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════ SECTION 6 — PROJECTS ══════════════════════════════ -->
+<section id="projects">
+  <div class="section-tag">Chapter 06</div>
+  <h2 class="section-title">Beginner <em>Projects</em></h2>
+  <p class="section-sub">Real projects you can build today. Start with Blink, work your way up to the weather station. Each project teaches a new skill.</p>
+
+  <div class="projects-grid" id="projectsGrid">
+    <!-- JS renders -->
+  </div>
+</section>
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════ SECTION 7 — QUIZ ══════════════════════════════ -->
+<section id="quiz">
+  <div class="section-tag">Chapter 07</div>
+  <h2 class="section-title">Test Your <em>Knowledge</em></h2>
+  <p class="section-sub">20 questions covering everything in this guide. See how much you've learned!</p>
+
+  <div class="quiz-container">
+    <div id="quizMain">
+      <div class="quiz-header">
+        <span class="quiz-question-num" id="qNum">Question 1 / 20</span>
+        <div class="quiz-progress-wrap">
+          <div class="quiz-progress-label" id="qProgressLabel">0% complete</div>
+          <div class="quiz-progress-track">
+            <div class="quiz-progress-fill" id="qProgressFill" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="quiz-score-badge">Score: <span id="qScore">0</span></div>
+      </div>
+      <div class="quiz-q" id="quizQuestion"></div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <button class="quiz-next" id="quizNextBtn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+    <div class="quiz-complete" id="quizComplete">
+      <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+      <div class="quiz-final-score" id="finalScore"></div>
+      <div class="quiz-final-msg" id="finalMsg"></div>
+      <button class="quiz-restart" onclick="restartQuiz()">🔄 Retake Quiz</button>
+    </div>
+  </div>
+</section>
+
+
 <!-- FOOTER -->
 <footer>
   <h3>⚡ Keep Building!</h3>
@@ -2696,7 +3172,7 @@ error: invalid conversion from 'int*' to 'int'" oninput="diagnoseError()"></text
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  document.getElementById('progressBar').style.width = (scrollTop/docHeight*100)+'%';
+  document.getElementById('readProgress').style.width = (scrollTop/docHeight*100)+'%';
   const btn = document.getElementById('backTop');
   scrollTop > 300 ? btn.classList.add('show') : btn.classList.remove('show');
 });
@@ -2755,13 +3231,11 @@ function calcOhm() {
   let msg = '';
 
   if (!isNaN(v) && !isNaN(i) && isNaN(r)) {
-    const calc = v/i;
-    msg = `Resistance (R) = V/I = ${v}V / ${i}A = <strong>${calc.toFixed(2)} Ω</strong>`;
-    document.getElementById('calcR').value = calc.toFixed(2);
+    if(i === 0) { msg = '⚠️ Cannot divide by zero — current (I) must not be 0.'; }
+    else { const calc = v/i; msg = `Resistance (R) = V/I = ${v}V / ${i}A = <strong>${calc.toFixed(2)} Ω</strong>`; document.getElementById('calcR').value = calc.toFixed(2); }
   } else if (!isNaN(v) && isNaN(i) && !isNaN(r)) {
-    const calc = v/r;
-    msg = `Current (I) = V/R = ${v}V / ${r}Ω = <strong>${calc.toFixed(4)} A (${(calc*1000).toFixed(1)} mA)</strong>`;
-    document.getElementById('calcI').value = calc.toFixed(4);
+    if(r === 0) { msg = '⚠️ Cannot divide by zero — resistance (R) must not be 0.'; }
+    else { const calc = v/r; msg = `Current (I) = V/R = ${v}V / ${r}Ω = <strong>${calc.toFixed(4)} A (${(calc*1000).toFixed(1)} mA)</strong>`; document.getElementById('calcI').value = calc.toFixed(4); }
   } else if (isNaN(v) && !isNaN(i) && !isNaN(r)) {
     const calc = i*r;
     msg = `Voltage (V) = I×R = ${i}A × ${r}Ω = <strong>${calc.toFixed(2)} V</strong>`;
@@ -4190,6 +4664,14 @@ const questions = [
   {q:"What is the maximum current a single Arduino digital pin can safely source?",opts:["100mA","500mA","40mA","10mA"],a:2,exp:"Each Arduino digital pin can safely source/sink up to 40mA. For loads requiring more current (motors, lots of LEDs), use a transistor or motor driver IC."},
   {q:"In a series circuit, what happens when one LED burns out?",opts:["Other LEDs get brighter","The circuit remains unaffected","All LEDs go out (circuit breaks)","Only that section goes dark"],a:2,exp:"In series, all components share the same current path. If one LED burns out and breaks the circuit, all LEDs in the series chain go out — just like old Christmas lights!"},
   {q:"Which Arduino board is most recommended for beginners?",opts:["Arduino Mega","Arduino Due","Arduino Nano","Arduino Uno"],a:3,exp:"The Arduino Uno is the standard beginner board. It has the most tutorials, clear documentation, is easy to wire on a breadboard, and protects itself with a resettable fuse. Start here!"},
+  {q:"What does Serial.begin(9600) set?",opts:["The pin number","The baud rate (communication speed)","The data type","The voltage level"],a:1,exp:"Serial.begin() sets the baud rate — the speed of serial communication in bits per second. Both Arduino and Serial Monitor must use the same baud rate or you'll see garbled text."},
+  {q:"What keyword must be used for variables shared between an ISR and main code?",opts:["static","const","volatile","extern"],a:2,exp:"volatile tells the compiler that the variable can be changed outside normal program flow (by an interrupt). Without it, the compiler might cache the value and miss updates from the ISR."},
+  {q:"What pins on the Arduino Uno support hardware interrupts?",opts:["Pins 0 and 1","Pins 2 and 3","Pins A0 and A1","Pins 9 and 10"],a:1,exp:"The Uno has 2 hardware interrupt pins: Pin 2 (INT0) and Pin 3 (INT1). These are the only pins that can trigger attachInterrupt(). Other boards like the Mega have more."},
+  {q:"Which I2C function requests data from a slave device?",opts:["Wire.write()","Wire.begin()","Wire.requestFrom()","Wire.read()"],a:2,exp:"Wire.requestFrom(address, quantity) asks a slave device at that address to send a number of bytes. You then read them with Wire.read() after checking Wire.available()."},
+  {q:"How many bytes of EEPROM does the Arduino Uno have?",opts:["32 KB","2 KB","512 bytes","1 KB (1024 bytes)"],a:3,exp:"The Uno has 1KB (1024 bytes) of EEPROM. It can be read/written with EEPROM.read(), EEPROM.write(), and EEPROM.update(). Use EEPROM.update() to avoid unnecessary writes and extend lifespan."},
+  {q:"What does the F() macro do in Arduino code?",opts:["Converts float to string","Stores string literals in Flash instead of SRAM","Makes functions faster","Formats Serial output"],a:1,exp:"F() stores string literals in program Flash memory (32KB) instead of SRAM (2KB). Since SRAM is extremely limited, wrapping constant strings like Serial.println(F(\"hello\")) is a key optimization."},
+  {q:"What is the difference between RISING and FALLING in attachInterrupt?",opts:["RISING fires on voltage drop, FALLING on rise","RISING fires LOW→HIGH, FALLING fires HIGH→LOW","They are identical","RISING is faster"],a:1,exp:"RISING triggers when the pin transitions from LOW to HIGH (0V→5V). FALLING triggers on HIGH to LOW (5V→0V). Choose based on your button wiring — if button pulls pin HIGH when pressed, use FALLING."},
+  {q:"Which SPI signal selects which device to communicate with?",opts:["MOSI","SCK","MISO","CS (Chip Select)"],a:3,exp:"CS (Chip Select, also called SS or Slave Select) is pulled LOW to activate a specific device on the SPI bus. All devices share MOSI/MISO/SCK, but each has its own CS pin — you control which one is active."},
 ];
 
 let qIndex=0, score=0;
@@ -4290,6 +4772,484 @@ document.addEventListener('keydown', function(e) {
 });
 
 renderQuestion();
+
+
+// ═══════════════════════════════════════════════════
+//  BOARD ANATOMY — Ch18
+// ═══════════════════════════════════════════════════
+(function(){
+  const boardParts = [
+    { id:'usb', icon:'🔌', name:'USB Type-B Port', type:'Power & Data',
+      desc:'This square socket is how you connect the Arduino to your computer. It does two jobs: it powers the board from your USB port, AND it sends your compiled code (sketch) from the IDE to the Arduino\'s memory.',
+      analogy:'Think of it as a front door with a mail slot. Power comes in through the door, and code gets delivered through the slot — at the same time.',
+      specs:['5V from USB','Up to 500mA current','USB-Serial bridge','Baud: up to 115200'],
+      color:'#00d4ff' },
+    { id:'power', icon:'⚡', name:'DC Power Jack', type:'External Power',
+      desc:'The barrel jack (7–12V DC) lets you power the Arduino without a computer — great for standalone projects, battery-powered gadgets, or when you need more current than USB provides. The onboard regulator converts it to 5V.',
+      analogy:'Like a wall socket vs. a battery pack. USB is the laptop charger (connected to desk), the DC jack is the portable power bank (go anywhere).',
+      specs:['Input: 7–12V DC','Center-positive','Onboard 7805 regulator','Powers everything'],
+      color:'#ff6b35' },
+    { id:'reset', icon:'🔄', name:'Reset Button', type:'Control',
+      desc:'Pressing this button restarts your sketch from the beginning — exactly as if you just powered on the board. It does NOT erase your code. Useful when your sketch gets stuck, or you want to restart a program.',
+      analogy:'Like the reset button on a game console — same as turning it off and on again. Your save data (code in Flash) is safe.',
+      specs:['Active LOW signal','Momentary push','Pull-up to 5V','Restarts sketch'],
+      color:'#ffd700' },
+    { id:'atmega', icon:'🧠', name:'ATmega328P Microcontroller', type:'Main CPU / Brain',
+      desc:'This is THE brain of the whole board. A single chip that contains: a CPU running at 16MHz, 32KB of Flash memory (stores your code), 2KB of SRAM (working memory while running), and 1KB of EEPROM (permanent storage). Everything else on the board supports this chip.',
+      analogy:'Like a tiny self-contained laptop: it has a CPU, RAM, storage, and I/O all in one black chip. The entire Arduino is just this chip plus wires and connectors.',
+      specs:['16 MHz clock','32KB Flash (program)','2KB SRAM (data)','1KB EEPROM','28 I/O pins','8-bit processor'],
+      color:'#7c3aed' },
+    { id:'crystal', icon:'💎', name:'16MHz Crystal Oscillator', type:'Timing',
+      desc:'This tiny silver cylinder vibrates at exactly 16 million times per second, providing the heartbeat that synchronizes all operations in the microcontroller. Without it, the CPU would have no sense of time.',
+      analogy:'Like a metronome for a musician — it keeps perfect time so every instruction executes in exactly the right order at the right speed. You can\'t do timing without it.',
+      specs:['16.000 MHz','±20ppm accuracy','Two load capacitors','Required for stable MCU'],
+      color:'#00ff88' },
+    { id:'voltage', icon:'🔋', name:'Voltage Regulator (5V)', type:'Power Management',
+      desc:'Converts the 7–12V from the DC jack down to a stable, clean 5V that all the chips and components need. It also protects the board from voltage spikes. The 3.3V version provides lower voltage for sensitive components.',
+      analogy:'Like a water pressure regulator — your city supply might be high-pressure, but your shower has a regulator so you don\'t get blasted.',
+      specs:['Input: up to 12V','Output: 5V stable','~800mA current max','Also provides 3.3V'],
+      color:'#ff4757' },
+    { id:'digital', icon:'📊', name:'Digital I/O Pins (0–13)', type:'I/O Pins',
+      desc:'14 pins that can read or write digital values: either HIGH (5V) or LOW (0V). Pins 0 & 1 are Serial TX/RX (used for USB communication — avoid unless needed). Pins 3, 5, 6, 9, 10, 11 support PWM (marked with ~). Pin 13 has a built-in LED.',
+      analogy:'Like light switches — each one is either ON or OFF. You control them with digitalWrite() or read them with digitalRead(). The ~ pins are special dimmers.',
+      specs:['14 pins total','5V logic level','40mA max per pin','6 PWM pins (~)','Serial on 0,1'],
+      color:'#00d4ff' },
+    { id:'analog', icon:'🌡️', name:'Analog Input Pins (A0–A5)', type:'Analog Sensing',
+      desc:'6 pins that can read ANALOG voltages between 0V and 5V and convert them to a number from 0 to 1023 using a 10-bit Analog-to-Digital Converter (ADC). Perfect for sensors like potentiometers, temperature sensors, light sensors, and microphones.',
+      analogy:'Instead of a light switch (on/off), these are dimmer knobs — they tell you exactly how bright (from 0 to 1023). Great for reading "how much" not just "yes or no".',
+      specs:['6 inputs (A0–A5)','10-bit resolution','0–1023 range','0–5V input','Can also be digital'],
+      color:'#ffd700' },
+    { id:'pwrpins', icon:'🔌', name:'Power Header Pins', type:'Power Distribution',
+      desc:'A row of pins for powering your circuits: 3.3V (for low-voltage sensors), 5V (main supply), GND (ground — always connect this!), and Vin (raw input voltage from DC jack, useful if you need 9V or 12V). IOREF tells shields the board\'s logic level.',
+      analogy:'Like the power strip on your desk — it takes one source of electricity and splits it into multiple outlets, each at the right voltage for different devices.',
+      specs:['5V (regulated)','3.3V (150mA max)','GND (return path)','Vin (raw DC)','IOREF (logic ref)'],
+      color:'#00ff88' },
+    { id:'icsp', icon:'📡', name:'ICSP Header (6-pin)', type:'Programming',
+      desc:'In-Circuit Serial Programming pins. These let you program the ATmega328P directly — bypassing the bootloader — using a hardware programmer. Also used to program the USB-to-Serial chip (ICSP2). Most beginners never use this, but it\'s essential for advanced work.',
+      analogy:'Like a service entrance at the back of a building — regular visitors use the front door (USB), but technicians use this direct access for deep maintenance.',
+      specs:['MISO/MOSI/SCK/RST','SPI protocol','ISP programming','Bypasses bootloader'],
+      color:'#8892b0' },
+    { id:'txrx', icon:'📻', name:'TX/RX LEDs', type:'Status Indicators',
+      desc:'Two tiny LEDs that blink whenever data is being sent (TX = transmit) or received (RX = receive) over the USB-Serial connection. If these blink rapidly when you upload code, everything is working. If they don\'t blink, check your port selection.',
+      analogy:'Like the talk/listen lights on a walkie-talkie — TX blinks when the Arduino is talking to the computer, RX blinks when it\'s listening.',
+      specs:['TX = transmitting','RX = receiving','Active LOW','USB communication'],
+      color:'#ff6b35' },
+    { id:'l13', icon:'💡', name:'Built-in LED (Pin 13)', type:'Output',
+      desc:'A real working LED connected directly to digital pin 13 on the board. The classic "Hello World" of Arduino is the Blink sketch — it just turns this LED on and off. Incredibly useful for debugging since you don\'t need any extra hardware.',
+      analogy:'The training wheels on a bike — it\'s there to help you learn and test without wiring anything. Once you\'re comfortable, you wire up your own LEDs.',
+      specs:['Connected to Pin 13','Full 5V / 0V control','Active HIGH (on=HIGH)','Perfect for first test'],
+      color:'#ffd700' },
+    { id:'usbserial', icon:'🔗', name:'USB-to-Serial Chip (ATmega16U2)', type:'Bridge',
+      desc:'This chip (usually ATmega16U2 on Uno R3, or CH340G on clones) acts as a translator between USB (what your computer speaks) and Serial UART (what the main ATmega328P speaks). It\'s why you can upload code over USB without a special programmer.',
+      analogy:'Like a live translator at a meeting — your computer speaks "USB language" and the main chip speaks "Serial UART". This chip sits between them and translates in real time.',
+      specs:['USB Full Speed','UART bridge','Virtual COM port','Enables bootloader'],
+      color:'#7c3aed' },
+  ];
+
+  function buildBoardCanvas(){
+    const canvas = document.getElementById('boardAnatCanvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    let hovered = null;
+
+    const regions = [
+      { id:'usb',      x:2, y:90, w:55, h:45 },
+      { id:'power',    x:2, y:145, w:45, h:40 },
+      { id:'reset',    x:60, y:2, w:40, h:22 },
+      { id:'atmega',   x:130, y:80, w:100, h:100 },
+      { id:'crystal',  x:245, y:100, w:35, h:25 },
+      { id:'voltage',  x:245, y:60, w:35, h:35 },
+      { id:'digital',  x:55, y:2, w:265, h:22 },
+      { id:'analog',   x:2, y:215, w:200, h:28 },
+      { id:'pwrpins',  x:2, y:245, w:145, h:28 },
+      { id:'icsp',     x:285, y:150, w:60, h:50 },
+      { id:'txrx',     x:70, y:28, w:55, h:22 },
+      { id:'l13',      x:130, y:28, w:38, h:22 },
+      { id:'usbserial', x:170, y:28, w:80, h:22 },
+    ];
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      // Board background
+      const grad = ctx.createLinearGradient(0,0,W,H);
+      grad.addColorStop(0,'#1a6a40'); grad.addColorStop(1,'#0d4a2a');
+      ctx.fillStyle=grad; ctx.beginPath();
+      ctx.moveTo(20,0);ctx.lineTo(W-10,0);ctx.lineTo(W,10);ctx.lineTo(W,H-10);ctx.lineTo(W-10,H);ctx.lineTo(10,H);ctx.lineTo(0,H-10);ctx.lineTo(0,10);ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle='#2ca86e'; ctx.lineWidth=2; ctx.stroke();
+
+      // Header pins top
+      for(let i=0;i<14;i++){
+        const px = 60+i*19;
+        ctx.fillStyle='#888'; ctx.fillRect(px,2,12,18);
+        ctx.fillStyle='#c8a000'; ctx.fillRect(px+2,4,8,14);
+      }
+      // Header pins bottom left
+      for(let i=0;i<12;i++){
+        const px = 5+i*18;
+        ctx.fillStyle='#888'; ctx.fillRect(px,H-20,12,18);
+        ctx.fillStyle='#c8a000'; ctx.fillRect(px+2,H-18,8,14);
+      }
+      // USB socket
+      ctx.fillStyle='#444'; ctx.fillRect(0,95,50,35);
+      ctx.fillStyle='#888'; ctx.fillRect(3,98,44,29);
+      ctx.fillStyle='#222'; ctx.fillRect(8,103,34,19);
+      ctx.fillStyle='#c8a000'; ctx.font='6px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('USB',25,120);
+      // DC jack
+      ctx.fillStyle='#333'; ctx.beginPath();ctx.arc(22,165,14,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#555'; ctx.beginPath();ctx.arc(22,165,10,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#111'; ctx.beginPath();ctx.arc(22,165,4,0,Math.PI*2);ctx.fill();
+      // Reset button
+      ctx.fillStyle='#e53935'; ctx.beginPath();ctx.arc(82,13,9,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#ff6b6b'; ctx.beginPath();ctx.arc(82,11,4,0,Math.PI*2);ctx.fill();
+      // TX/RX LEDs
+      ctx.fillStyle='#ffd700'; ctx.beginPath();ctx.arc(78,39,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#00d4ff'; ctx.beginPath();ctx.arc(93,39,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#8892b0'; ctx.font='6px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('TX',78,52); ctx.fillText('RX',93,52);
+      // L13 LED
+      ctx.fillStyle='#ffd700'; ctx.beginPath();ctx.arc(150,39,5,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#ffd700'; ctx.font='6px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('L',150,52);
+      // USB-Serial chip
+      ctx.fillStyle='#1a1a2e'; ctx.fillRect(175,30,75,18);
+      ctx.strokeStyle='#555'; ctx.lineWidth=0.5; ctx.strokeRect(175,30,75,18);
+      for(let i=0;i<5;i++){ctx.fillStyle='#888';ctx.fillRect(175+i*15,28,8,2);ctx.fillRect(175+i*15,48,8,2);}
+      ctx.fillStyle='#666'; ctx.font='5px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('USB-Serial',212,42);
+      // ATmega chip
+      ctx.fillStyle='#1a1a2e'; ctx.fillRect(132,82,96,96);
+      ctx.strokeStyle='#3a3a5e'; ctx.lineWidth=1.5; ctx.strokeRect(132,82,96,96);
+      // Chip pins
+      for(let i=0;i<7;i++){ctx.fillStyle='#888';ctx.fillRect(128,90+i*13,4,8);ctx.fillRect(228,90+i*13,4,8);}
+      for(let i=0;i<5;i++){ctx.fillStyle='#888';ctx.fillRect(145+i*14,78,8,4);ctx.fillRect(145+i*14,178,8,4);}
+      ctx.fillStyle='var(--text,#e8eaf6)'; ctx.font='bold 10px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('ATmega',180,130);ctx.fillText('328P',180,144);
+      ctx.font='7px Space Mono'; ctx.fillStyle='#555'; ctx.fillText('ARDUINO',180,158);
+      // Crystal
+      ctx.fillStyle='#c0c0c0'; ctx.fillRect(248,105,28,14);
+      ctx.strokeStyle='#888'; ctx.lineWidth=1; ctx.strokeRect(248,105,28,14);
+      ctx.fillStyle='#666'; ctx.font='5px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('16MHz',262,120);
+      // Voltage regulator
+      ctx.fillStyle='#222'; ctx.fillRect(248,63,30,28);
+      ctx.strokeStyle='#555'; ctx.lineWidth=1; ctx.strokeRect(248,63,30,28);
+      for(let i=0;i<3;i++){ctx.fillStyle='#888';ctx.fillRect(248+i*12,59,6,4);}
+      ctx.fillStyle='#666'; ctx.font='5px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('5V Reg',263,93);
+      // ICSP header
+      for(let r=0;r<2;r++) for(let c=0;c<3;c++){
+        ctx.fillStyle='#555'; ctx.fillRect(290+c*12,155+r*15,10,12);
+        ctx.fillStyle='#c8a000'; ctx.fillRect(292+c*12,157+r*15,6,8);
+      }
+      ctx.fillStyle='#8892b0'; ctx.font='6px Space Mono'; ctx.textAlign='center';
+      ctx.fillText('ICSP',308,198);
+
+      // Hover highlight regions
+      regions.forEach(r=>{
+        const part = boardParts.find(p=>p.id===r.id);
+        if(!part) return;
+        const isHov = hovered===r.id;
+        ctx.fillStyle = isHov ? part.color+'40' : part.color+'10';
+        ctx.strokeStyle = isHov ? part.color : part.color+'50';
+        ctx.lineWidth = isHov ? 2 : 1;
+        ctx.setLineDash(isHov?[]:[3,3]);
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(r.x,r.y,r.w,r.h,4) : ctx.rect(r.x,r.y,r.w,r.h);
+        ctx.fill(); ctx.stroke();
+        ctx.setLineDash([]);
+      });
+    }
+
+    draw();
+
+    function getHitPart(mx, my){
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const cx = (mx - rect.left)*scaleX;
+      const cy = (my - rect.top)*scaleY;
+      return regions.find(r=>cx>=r.x&&cx<=r.x+r.w&&cy>=r.y&&cy<=r.y+r.h)||null;
+    }
+
+    canvas.addEventListener('mousemove',function(e){
+      const hit = getHitPart(e.clientX, e.clientY);
+      const newHov = hit ? hit.id : null;
+      if(newHov !== hovered){ hovered=newHov; draw(); document.getElementById('boardPartName').textContent = hovered ? boardParts.find(p=>p.id===hovered)?.name||'' : ''; }
+    });
+
+    canvas.addEventListener('click',function(e){
+      const hit = getHitPart(e.clientX, e.clientY);
+      if(!hit) return;
+      const part = boardParts.find(p=>p.id===hit.id);
+      if(!part) return;
+      document.getElementById('bpdIcon').textContent = part.icon;
+      document.getElementById('bpdName').textContent = part.name;
+      document.getElementById('bpdType').textContent = part.type;
+      document.getElementById('bpdDesc').textContent = part.desc;
+      const analDiv = document.getElementById('bpdAnalogy');
+      analDiv.style.display='block';
+      document.getElementById('bpdAnalogyText').textContent = part.analogy;
+      const specsDiv = document.getElementById('bpdSpecs');
+      specsDiv.style.display='flex';
+      specsDiv.innerHTML = part.specs.map(s=>`<span class="bpd-spec-tag">${s}</span>`).join('');
+    });
+  }
+
+  function buildBoardPartsGrid(){
+    const grid = document.getElementById('boardPartsGrid');
+    if(!grid) return;
+    grid.innerHTML = boardParts.map(p=>`
+      <div class="bpart-card reveal">
+        <div class="bpart-header">
+          <div class="bpart-icon">${p.icon}</div>
+          <div><div class="bpart-name">${p.name}</div><div class="bpart-sub">${p.type}</div></div>
+        </div>
+        <div class="bpart-desc">${p.desc}</div>
+        <div class="bpart-analogy">💡 ${p.analogy}</div>
+        <div style="margin-top:.75rem;display:flex;flex-wrap:wrap;gap:.3rem;">${p.specs.map(s=>`<span class="spec-tag">${s}</span>`).join('')}</div>
+      </div>
+    `).join('');
+  }
+
+  buildBoardCanvas();
+  buildBoardPartsGrid();
+})();
+
+// ═══════════════════════════════════════════════════
+//  IDE ANATOMY — Ch19
+// ═══════════════════════════════════════════════════
+(function(){
+  const ideParts = [
+    { id:'toolbar', icon:'🔧', name:'Toolbar', type:'Main Controls',
+      desc:'The row of icon buttons at the top. From left to right: Verify (✓) compiles your code and checks for errors. Upload (→) compiles AND sends code to the board. New, Open, and Save manage your sketch files. The magnifying glass opens the Serial Monitor.',
+      analogy:'Like the toolbar in Word — Bold, Italic, Save are there for the most common actions. You\'ll use Verify and Upload constantly.',
+      tips:['Verify before uploading to catch errors fast','Ctrl+U = quick upload shortcut','Ctrl+Shift+M = Serial Monitor'],
+      color:'#00d4ff' },
+    { id:'verify', icon:'✅', name:'Verify Button (✓)', type:'Compile',
+      desc:'Compiles your sketch without uploading. Translates your C++ code into machine language and reports any errors. The output panel below shows success ("Done compiling") or lists every error with a line number.',
+      analogy:'Like spell-check and grammar-check in one — it finds every mistake in your code before you commit to sending it.',
+      tips:['Always verify before upload','Errors show with line numbers','Warnings are not errors'],
+      color:'#00ff88' },
+    { id:'upload', icon:'🚀', name:'Upload Button (→)', type:'Upload',
+      desc:'Compiles your sketch AND immediately transfers it to the Arduino via USB. The TX/RX LEDs on the board will blink rapidly. Once complete, the Arduino auto-resets and runs the new code immediately.',
+      analogy:'Like hitting "Publish" on a website — it compiles everything into a final package, then deploys it live to the device.',
+      tips:['Board must be connected first','Select correct port (Tools → Port)','Hold RESET if upload fails'],
+      color:'#7c3aed' },
+    { id:'editor', icon:'✏️', name:'Code Editor', type:'Text Editor',
+      desc:'Where you write your Arduino sketch (program). It has C++ syntax highlighting — keywords turn orange, strings turn green, comments turn grey. Line numbers on the left help you find errors. The cursor blinks where you\'re typing.',
+      analogy:'Like a specialized text editor that understands C++ — similar to VS Code or Notepad++, but built specifically for Arduino code.',
+      tips:['Auto-indent with Ctrl+T','Ctrl+/ toggles comments','Tab = 2 spaces by default'],
+      color:'#ffd700' },
+    { id:'statusbar', icon:'📊', name:'Status Bar', type:'Information',
+      desc:'The dark bar just below the editor shows the current board type (e.g., "Arduino Uno") and the selected COM port (e.g., "COM3"). If "No board selected" appears, you haven\'t chosen your board in Tools → Board.',
+      analogy:'Like the status bar in Excel that shows "Sum=100" when you select cells — it\'s always there quietly showing you important state information.',
+      tips:['Shows board and port selection','Updates when you change settings','Green dot = board connected'],
+      color:'#8892b0' },
+    { id:'console', icon:'📟', name:'Output Console', type:'Feedback',
+      desc:'The black panel at the bottom. Shows compiler messages, upload progress, and error details. Errors appear in red with file name and line number. "Done compiling" in orange means success. "Done uploading" means code is on the board.',
+      analogy:'Like the flight deck of an airplane — all the warnings, status messages, and system output stream here so you always know what\'s happening.',
+      tips:['Read errors top-to-bottom','Line numbers are clickable in IDE 2.x','Orange text = warnings (not fatal)'],
+      color:'#ff6b35' },
+    { id:'serialmon', icon:'📡', name:'Serial Monitor', type:'Communication',
+      desc:'A popup window (Tools → Serial Monitor or 🔍) that lets you send text to and receive text from the Arduino in real time. Essential for debugging — use Serial.println("value") in your code and it appears here.',
+      analogy:'Like a live phone call with your Arduino — you can type messages to it (if coded to receive them) and it can print messages back to you as it runs.',
+      tips:['Set baud rate to match Serial.begin()','Auto-scroll for new data','Newline setting affects input'],
+      color:'#ff4757' },
+    { id:'boardsel', icon:'🎯', name:'Board & Port Selection', type:'Configuration',
+      desc:'Under the Tools menu, Board selects which Arduino model you\'re using (Uno, Mega, Nano, etc.), and Port selects which USB/COM port it\'s connected to. Getting these wrong is the #1 cause of upload failures for beginners.',
+      analogy:'Like selecting the right printer before printing — your computer needs to know exactly which device to talk to and how to talk to it.',
+      tips:['Board: Tools → Board → Arduino AVR Boards → Uno','Port: Tools → Port → select COM/ttyUSB','When in doubt, unplug and re-plug USB'],
+      color:'#7c3aed' },
+    { id:'menubar', icon:'📋', name:'Menu Bar', type:'Navigation',
+      desc:'File, Edit, Sketch, Tools, Help. The most important menus: File → New/Open/Save, Sketch → Include Library, Tools → Board/Port/Serial Monitor, and Help → Reference (offline docs). The Reference is an incredible free resource.',
+      analogy:'Like the menu bar in any app — most of what you need daily is in the toolbar, but the full power of the IDE is hidden in these menus.',
+      tips:['Sketch → Include Library → Manage to install libraries','File → Preferences to change text size','Help → Reference for offline docs'],
+      color:'#00d4ff' },
+    { id:'sketch', icon:'📁', name:'Sketch (Project)', type:'File Structure',
+      desc:'A sketch is your Arduino program — a folder containing at minimum one .ino file with the same name as the folder. The IDE saves sketches in your "Sketchbook" folder (configurable in Preferences). You can have multiple .ino files in one sketch.',
+      analogy:'Like a project in any programming environment — one folder, one main file, but can contain multiple tabs/files. The sketch folder is your project folder.',
+      tips:['Each sketch = one folder','All .ino files in the folder get combined','Libraries go in Documents/Arduino/libraries'],
+      color:'#00ff88' },
+    { id:'library', icon:'📚', name:'Library Manager', type:'Extensions',
+      desc:'Sketch → Include Library → Manage Libraries opens a searchable catalog of hundreds of free libraries — pre-written code for sensors, displays, motors, and more. One click to install. Libraries appear as #include statements in your code.',
+      analogy:'Like an app store for your code — instead of writing everything from scratch, you install a library and get instant access to complex functionality.',
+      tips:['Search by sensor name or function','Check library version compatibility','Installed libraries live in Documents/Arduino/libraries'],
+      color:'#ffd700' },
+    { id:'boardmanager', icon:'🔌', name:'Board Manager', type:'Boards & Cores',
+      desc:'Tools → Board → Boards Manager lets you install support for non-standard Arduino boards like ESP32, ESP8266, or Teensy. Each board "core" adds that board to the Board menu and provides the right compiler and upload tools.',
+      analogy:'Like installing a printer driver — your computer needs special software to talk to each different board model. The Board Manager downloads and installs these automatically.',
+      tips:['Add the ESP32 URL in Preferences first','Each core downloads AVR/ARM tools','Keep cores updated for bug fixes'],
+      color:'#ff6b35' },
+  ];
+
+  function buildIDECanvas(){
+    const canvas = document.getElementById('ideAnatCanvas');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    let hovered = null;
+
+    // IDE regions mapped to canvas coordinates
+    const regions = [
+      { id:'menubar',    x:0,  y:0,  w:W, h:20 },
+      { id:'toolbar',    x:0,  y:20, w:W, h:44 },
+      { id:'verify',     x:5,  y:24, w:42, h:36 },
+      { id:'upload',     x:52, y:24, w:42, h:36 },
+      { id:'boardsel',   x:200,y:24, w:175,h:36 },
+      { id:'editor',     x:0,  y:64, w:W, h:H-64-80 },
+      { id:'statusbar',  x:0,  y:H-80, w:W, h:20 },
+      { id:'console',    x:0,  y:H-60, w:W, h:60 },
+    ];
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      // Window background
+      ctx.fillStyle='#1e2130'; ctx.fillRect(0,0,W,H);
+      // Menu bar
+      ctx.fillStyle='#252840'; ctx.fillRect(0,0,W,20);
+      ['File','Edit','Sketch','Tools','Help'].forEach((m,i)=>{
+        ctx.fillStyle='#a0a8c0'; ctx.font='9px sans-serif'; ctx.textAlign='left';
+        ctx.fillText(m, 8+i*46, 13);
+      });
+      // Toolbar
+      ctx.fillStyle='#1a1f35'; ctx.fillRect(0,20,W,44);
+      ctx.strokeStyle='#2a3050'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,64); ctx.lineTo(W,64); ctx.stroke();
+      // Toolbar buttons
+      const tbBtns=[{t:'✓',c:'#00d4ff',tip:'Verify'},{t:'→',c:'#7c3aed',tip:'Upload'},{t:'⊡',c:'#555',tip:'New'},{t:'📂',c:'#555',tip:'Open'},{t:'💾',c:'#555',tip:'Save'},{t:'🔍',c:'#ff6b35',tip:'Serial'}];
+      tbBtns.forEach((b,i)=>{
+        const bx=8+i*47, by=28;
+        ctx.fillStyle='#2a3050'; ctx.fillRect(bx,by,38,30); 
+        ctx.strokeStyle=b.c+'80'; ctx.lineWidth=1; ctx.strokeRect(bx,by,38,30);
+        ctx.fillStyle=b.c; ctx.font='bold 14px sans-serif'; ctx.textAlign='center';
+        ctx.fillText(b.t,bx+19,by+20);
+      });
+      // Board selector
+      ctx.fillStyle='#1a2a20'; ctx.fillRect(200,26,175,30);
+      ctx.strokeStyle='#2ca86e50'; ctx.lineWidth=1; ctx.strokeRect(200,26,175,30);
+      ctx.fillStyle='#00d4ff'; ctx.font='bold 8px Space Mono'; ctx.textAlign='left';
+      ctx.fillText('Arduino Uno',208,38);
+      ctx.fillStyle='#4a5570'; ctx.font='7px Space Mono';
+      ctx.fillText('COM3',208,50);
+      // Editor
+      const edY=64, edH=H-64-80;
+      ctx.fillStyle='#0d1117'; ctx.fillRect(0,edY,W,edH);
+      // Line numbers
+      ctx.fillStyle='#1e2130'; ctx.fillRect(0,edY,30,edH);
+      for(let i=1;i<=12;i++){
+        ctx.fillStyle='#3a4050'; ctx.font='8px JetBrains Mono';
+        ctx.textAlign='right'; ctx.fillText(i,25,edY+10+i*14);
+      }
+      // Code lines
+      const codeLines=[
+        [{t:'void ',c:'#ff79c6'},{t:'setup',c:'#50fa7b'},{t:'() {',c:'#f8f8f2'}],
+        [{t:'  ',c:'#f8f8f2'},{t:'pinMode',c:'#50fa7b'},{t:'(',c:'#f8f8f2'},{t:'13',c:'#bd93f9'},{t:',',c:'#f8f8f2'},{t:'OUTPUT',c:'#ffb86c'},{t:');',c:'#f8f8f2'}],
+        [{t:'}',c:'#f8f8f2'}],[],
+        [{t:'void ',c:'#ff79c6'},{t:'loop',c:'#50fa7b'},{t:'() {',c:'#f8f8f2'}],
+        [{t:'  ',c:'#f8f8f2'},{t:'digitalWrite',c:'#50fa7b'},{t:'(',c:'#f8f8f2'},{t:'13',c:'#bd93f9'},{t:', ',c:'#f8f8f2'},{t:'HIGH',c:'#ffb86c'},{t:');',c:'#f8f8f2'}],
+        [{t:'  ',c:'#f8f8f2'},{t:'delay',c:'#50fa7b'},{t:'(',c:'#f8f8f2'},{t:'1000',c:'#bd93f9'},{t:');',c:'#f8f8f2'}],
+        [{t:'  ',c:'#f8f8f2'},{t:'digitalWrite',c:'#50fa7b'},{t:'(',c:'#f8f8f2'},{t:'13',c:'#bd93f9'},{t:', ',c:'#f8f8f2'},{t:'LOW',c:'#ffb86c'},{t:');',c:'#f8f8f2'}],
+        [{t:'  ',c:'#f8f8f2'},{t:'delay',c:'#50fa7b'},{t:'(',c:'#f8f8f2'},{t:'1000',c:'#bd93f9'},{t:');',c:'#f8f8f2'}],
+        [{t:'}',c:'#f8f8f2'}],
+      ];
+      codeLines.forEach((line,row)=>{
+        let x=36;
+        line.forEach(seg=>{ ctx.fillStyle=seg.c; ctx.font='9px JetBrains Mono'; ctx.textAlign='left'; const tw=ctx.measureText(seg.t).width; ctx.fillText(seg.t,x,edY+14+row*14); x+=tw; });
+      });
+      // Cursor blink
+      const curX=36, curY=edY+14+9*14;
+      if(Math.floor(Date.now()/500)%2===0){ ctx.fillStyle='#00d4ff'; ctx.fillRect(curX,curY-10,2,11); }
+      // Status bar
+      ctx.fillStyle='#0a7a40'; ctx.fillRect(0,H-80,W,20);
+      ctx.fillStyle='white'; ctx.font='bold 8px Space Mono'; ctx.textAlign='left';
+      ctx.fillText('Arduino Uno on COM3',8,H-67);
+      // Console
+      ctx.fillStyle='#0d0d0d'; ctx.fillRect(0,H-60,W,60);
+      ctx.strokeStyle='#1a4a1a'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,H-60); ctx.lineTo(W,H-60); ctx.stroke();
+      const consoleMsgs=[
+        {t:'Sketch uses 924 bytes (2%) of program storage space.',c:'#888'},
+        {t:'Global variables use 9 bytes (0%) of dynamic memory.',c:'#888'},
+        {t:'Done uploading.',c:'#ffa500'},
+      ];
+      consoleMsgs.forEach((m,i)=>{ ctx.fillStyle=m.c; ctx.font='7px JetBrains Mono'; ctx.textAlign='left'; ctx.fillText(m.t,6,H-48+i*14); });
+
+      // Hover highlights
+      regions.forEach(r=>{
+        const part = ideParts.find(p=>p.id===r.id);
+        if(!part) return;
+        const isHov = hovered===r.id;
+        ctx.fillStyle = isHov ? part.color+'30' : 'transparent';
+        ctx.strokeStyle = isHov ? part.color : part.color+'40';
+        ctx.lineWidth = isHov ? 2 : 0.5;
+        ctx.setLineDash(isHov?[]:[4,4]);
+        ctx.strokeRect(r.x+1,r.y+1,r.w-2,r.h-2);
+        if(isHov) ctx.fillRect(r.x,r.y,r.w,r.h);
+        ctx.setLineDash([]);
+      });
+    }
+
+    let animFrame;
+    function animate(){ draw(); animFrame=requestAnimationFrame(animate); }
+    animate();
+
+    function getHit(mx,my){
+      const rect=canvas.getBoundingClientRect();
+      const cx=(mx-rect.left)*canvas.width/rect.width;
+      const cy=(my-rect.top)*canvas.height/rect.height;
+      return regions.find(r=>cx>=r.x&&cx<=r.x+r.w&&cy>=r.y&&cy<=r.y+r.h)||null;
+    }
+
+    canvas.addEventListener('mousemove',function(e){
+      const hit=getHit(e.clientX,e.clientY);
+      hovered=hit?hit.id:null;
+      document.getElementById('idePartName').textContent=hovered?ideParts.find(p=>p.id===hovered)?.name||'':'';
+    });
+
+    canvas.addEventListener('click',function(e){
+      const hit=getHit(e.clientX,e.clientY);
+      if(!hit) return;
+      const part=ideParts.find(p=>p.id===hit.id);
+      if(!part) return;
+      document.getElementById('ipdIcon').textContent=part.icon;
+      document.getElementById('ipdName').textContent=part.name;
+      document.getElementById('ipdType').textContent=part.type;
+      document.getElementById('ipdDesc').textContent=part.desc;
+      const aDiv=document.getElementById('ipdAnalogy');
+      aDiv.style.display='block';
+      document.getElementById('ipdAnalogyText').textContent=part.analogy;
+      const tDiv=document.getElementById('ipdTips');
+      tDiv.style.display='block';
+      tDiv.innerHTML='<div style="font-size:.65rem;font-family:Space Mono,monospace;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem;">⚡ Pro Tips</div>'+part.tips.map(t=>`<div style="font-size:.78rem;color:var(--text);margin:.2rem 0;padding-left:.8rem;border-left:2px solid var(--accent3);">${t}</div>`).join('');
+    });
+  }
+
+  function buildIDEPartsGrid(){
+    const grid=document.getElementById('idePartsGrid');
+    if(!grid) return;
+    grid.innerHTML=ideParts.map(p=>`
+      <div class="bpart-card ide-card reveal">
+        <div class="bpart-header">
+          <div class="bpart-icon">${p.icon}</div>
+          <div><div class="bpart-name">${p.name}</div><div class="bpart-sub" style="color:var(--accent3)">${p.type}</div></div>
+        </div>
+        <div class="bpart-desc">${p.desc}</div>
+        <div class="bpart-analogy" style="background:rgba(124,58,237,.05);border-left-color:var(--accent3);">💡 ${p.analogy}</div>
+        <div style="margin-top:.75rem;">
+          ${p.tips.map(t=>`<div style="font-size:.75rem;color:var(--muted);padding:.15rem 0 .15rem .6rem;border-left:2px solid var(--accent3)40;">${t}</div>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  buildIDECanvas();
+  buildIDEPartsGrid();
+})();
+
+
 </script>
 
 <script>
@@ -4704,34 +5664,6 @@ setTimeout(updateOps, 100);
 // ═══════════════════════════════════════════════════
 //  COPY CODE BUTTONS — add to all .code-editor blocks
 // ═══════════════════════════════════════════════════
-(function(){
-  document.querySelectorAll('.code-editor').forEach(editor=>{
-    const header = editor.querySelector('.editor-header');
-    if(!header || header.querySelector('.copy-code-btn')) return;
-    const btn = document.createElement('button');
-    btn.className = 'copy-code-btn';
-    btn.title = 'Copy code';
-    btn.innerHTML = '⎘ Copy';
-    btn.style.cssText='background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--accent);border-radius:5px;padding:.2rem .6rem;font-family:Space Mono,monospace;font-size:.65rem;cursor:pointer;transition:all .2s;margin-left:.5rem;';
-    btn.onclick = function(){
-      const code = editor.querySelector('.code-area code, .cpp-code');
-      if(!code) return;
-      const text = code.innerText || code.textContent;
-      navigator.clipboard.writeText(text).then(()=>{
-        btn.innerHTML = '✓ Copied!';
-        btn.style.color='var(--green)';
-        btn.style.borderColor='rgba(0,255,136,.3)';
-        setTimeout(()=>{ btn.innerHTML='⎘ Copy'; btn.style.color='var(--accent)'; btn.style.borderColor='rgba(0,212,255,.2)'; },1500);
-      }).catch(()=>{
-        btn.innerHTML='✗ Failed';
-        setTimeout(()=>{ btn.innerHTML='⎘ Copy'; },1200);
-      });
-    };
-    header.querySelector('.editor-dots').insertAdjacentElement('afterend', btn);
-  });
-})();
-
-// ═══════════════════════════════════════════════════
 //  SCROLL REVEAL — add .reveal to cards/sections
 // ═══════════════════════════════════════════════════
 (function(){
@@ -5028,6 +5960,10 @@ function diagnoseError() {
     }
 
     /* ── LOOP BOX GLOW ── */
+    @keyframes boxGlow {
+      from { box-shadow: 0 0 0px rgba(0,212,255,0); transform: scale(1); }
+      to   { box-shadow: 0 0 18px rgba(0,212,255,.7); transform: scale(1.12); }
+    }
     .loop-box.active {
       animation: boxGlow .3s ease both, activePulse 1s ease infinite alternate;
     }
@@ -5487,6 +6423,121 @@ function diagnoseError() {
   `;
   document.head.appendChild(style);
 })();
-</script>
-</body>
+
+// READING PROGRESS BAR: handled in main scroll listener above
+
+// ═══════════════════════════════════════════════════
+//  STAGGERED CARD ENTRANCE DELAYS
+// ═══════════════════════════════════════════════════
+(function(){
+  document.querySelectorAll('section').forEach(sec=>{
+    Array.from(sec.querySelectorAll('.card,.lib-card,.error-card,.analogy-card,.project-card,.component-card'))
+      .forEach((el,i)=>{ el.style.transitionDelay=(i*65)+'ms'; });
+  });
+})();
+
+// ═══════════════════════════════════════════════════
+//  SCROLL REVEAL
+// ═══════════════════════════════════════════════════
+(function(){
+  document.querySelectorAll('.card,.analogy-card,.error-card,.lib-card,.project-card,.highlight-box,.tip-box,.array-vis,.millis-demo,.op-playground,.serial-playground,.fn-vis,.circuit-demo,.flow-demo,.board-anatomy-wrap,.ide-anatomy-wrap').forEach(el=>el.classList.add('reveal'));
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.06});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+})();
+
+// ═══════════════════════════════════════════════════
+//  FIX: Mobile nav close on link click
+// ═══════════════════════════════════════════════════
+(function(){
+  const nl=document.querySelector('.nav-links'),nt=document.getElementById('navToggle');
+  if(!nl||!nt) return;
+  nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{nl.classList.remove('open');nt.textContent='\u2630';}));
+})();
+
+// ═══════════════════════════════════════════════════
+//  COPY BUTTONS ON ALL CODE BLOCKS (chapter-wide)
+// ═══════════════════════════════════════════════════
+(function(){
+  function makeCopyBtn(getText,insertInto,insertMethod){
+    const btn=document.createElement('button');
+    btn.style.cssText='background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:#00d4ff;border-radius:5px;padding:.2rem .5rem;font-family:Space Mono,monospace;font-size:.62rem;cursor:pointer;transition:all .2s;position:absolute;top:8px;right:8px;z-index:5;opacity:0;';
+    btn.textContent='\u2398 Copy';
+    btn.onclick=e=>{e.stopPropagation();navigator.clipboard.writeText(getText()).then(()=>{btn.textContent='\u2714 Copied!';btn.style.color='#00ff88';setTimeout(()=>{btn.textContent='\u2398 Copy';btn.style.color='#00d4ff';},1800);}).catch(()=>{});};
+    insertInto[insertMethod||'appendChild'](btn);
+    insertInto.addEventListener('mouseenter',()=>btn.style.opacity='1');
+    insertInto.addEventListener('mouseleave',()=>btn.style.opacity='0');
+    return btn;
+  }
+  // .code-editor blocks
+  document.querySelectorAll('.code-editor').forEach(editor=>{
+    const hdr=editor.querySelector('.editor-header');
+    if(!hdr||hdr.querySelector('.copy-code-btn')) return;
+    const b=document.createElement('button');
+    b.className='copy-code-btn'; b.innerHTML='\u2398 Copy';
+    b.style.cssText='background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--accent);border-radius:5px;padding:.2rem .5rem;font-family:Space Mono,monospace;font-size:.65rem;cursor:pointer;transition:all .2s;margin-left:auto;';
+    b.onclick=()=>{
+      const code=editor.querySelector('.code-area code,.code-area');
+      navigator.clipboard.writeText((code?code.innerText:editor.innerText).replace(/\u2398 Copy\n?/,'').trim()).then(()=>{b.innerHTML='\u2714 Copied!';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='\u2398 Copy';b.style.color='var(--accent)';},1800);}).catch(()=>{});
+    };
+    hdr.querySelector('.editor-dots').insertAdjacentElement('afterend',b);
+  });
+  // Inline highlight-boxes and chapter code blocks
+  document.querySelectorAll('.highlight-box,.cpp-side,.board-code-block,.ide-code-block').forEach(el=>{
+    if(!el.querySelector('.kw,.num,.cmt,.str,code') || el.querySelector('.code-copy-btn')) return;
+    el.style.position='relative';
+    makeCopyBtn(()=>el.innerText.replace(/^\u2398 Copy\n?/m,'').trim(), el);
+  });
+})();
+
+// ═══════════════════════════════════════════════════
+//  SMOOTH SCROLL FOR NAV LINKS
+// ═══════════════════════════════════════════════════
+(function(){
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',function(e){
+      const t=document.querySelector(this.getAttribute('href'));
+      if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+})();
+
+// ═══════════════════════════════════════════════════
+//  NAV ACTIVE HIGHLIGHT
+// ═══════════════════════════════════════════════════
+(function(){
+  const secs=document.querySelectorAll('section[id]');
+  const nls=document.querySelectorAll('.nav-links a[href^="#"]');
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){nls.forEach(a=>a.classList.remove('active'));const l=document.querySelector(`.nav-links a[href="#${e.target.id}"]`);if(l)l.classList.add('active');}});
+  },{rootMargin:'-40% 0px -55% 0px'});
+  secs.forEach(s=>obs.observe(s));
+})();
+
+// ═══════════════════════════════════════════════════
+//  KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════
+(function(){
+  document.addEventListener('keydown',function(e){
+    if(e.ctrlKey||e.metaKey||e.altKey) return;
+    const opts=document.querySelectorAll('.quiz-option:not([disabled])');
+    if(opts.length>0){const i=parseInt(e.key)-1;if(i>=0&&i<opts.length){opts[i].click();return;}}
+    if(e.code==='Space'&&e.target===document.body){const b=document.getElementById('runSimBtn');if(b){e.preventDefault();b.click();}}
+  });
+})();
+
+// ═══════════════════════════════════════════════════
+//  EXTRA ERROR DECODER PATTERNS
+// ═══════════════════════════════════════════════════
+(function(){
+  if(typeof errorPatterns==='undefined') return;
+  [{pattern:/exit status 1/i,title:'\uD83D\uDCA5 Compilation Failed',fix:'The real error is above "exit status 1". Fix that first.',color:'#ff4757'},
+   {pattern:/redefinition of/i,title:'\uD83D\uDD01 Variable Defined Twice',fix:'Duplicate declaration found. Remove one.',color:'#ff6b35'},
+   {pattern:/avrdude|programmer|port/i,title:'\uD83D\uDD0C Upload / Port Problem',fix:'1) Check USB  2) Tools \u2192 Port  3) Hold RESET then Upload.',color:'#7c3aed'},
+   {pattern:/low memory|global variables use/i,title:'\uD83D\uDCBE Low SRAM',fix:'Use F() macro: Serial.println(F("text")) to save SRAM.',color:'#ffd700'},
+   {pattern:/sketch too large|program storage/i,title:'\uD83D\uDCE6 Sketch Too Large',fix:'Remove unused #include libraries.',color:'#ff4757'},
+   {pattern:/no such file|cannot open source/i,title:'\uD83D\uDCC1 Missing Library',fix:'Sketch \u2192 Include Library \u2192 Manage Libraries.',color:'#ff6b35'},
+   {pattern:/lvalue required|invalid use of/i,title:'\uD83D\uDD27 Assignment Error',fix:'Used == instead of =, or a literal on the left side.',color:'#ff4757'},
+  ].forEach(p=>errorPatterns.push(p));
+})();
+</script></body>
 </html>
