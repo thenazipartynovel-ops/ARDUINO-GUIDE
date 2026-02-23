@@ -310,7 +310,7 @@
     width: 100%; height: 320px;
     background: var(--bg);
     border-radius: 12px; border: 1px solid var(--border);
-    position: relative; overflow: hidden;
+    position: relative; overflow: visible;
     display: flex; align-items: center; justify-content: center;
   }
   canvas#circuitCanvas { display: block; }
@@ -1419,18 +1419,8 @@ html { scroll-behavior: smooth; }
 *, *::before, *::after { box-sizing: border-box; }
 
 /* Nav responsive */
-@media (max-width: 900px) {
-  nav { padding: .4rem .5rem; }
-  nav ul { gap: .1rem; flex-wrap: wrap; justify-content: center; }
-  nav ul li a { font-size: .55rem; padding: .3rem .4rem; }
-}
-@media (max-width: 600px) {
-  nav { position: fixed; top: auto; bottom: 0; left: 0; right: 0; border-radius: 0; border-top: 1px solid var(--border); border-right: none; height: auto; width: 100%; flex-direction: row; padding: .3rem .2rem; max-height: 3.5rem; overflow-x: auto; overflow-y: hidden; }
-  nav ul { flex-direction: row; overflow-x: auto; padding-bottom: 2px; flex-wrap: nowrap; }
-  nav ul li a { white-space: nowrap; font-size: .5rem; padding: .25rem .35rem; }
-  body { padding-bottom: 3.5rem; }
-  #readProgress { display: none; }
-}
+/* 900px nav wrap removed */
+/* bottom-bar removed — using hamburger instead */
 
 /* Section padding mobile */
 @media (max-width: 768px) {
@@ -1544,13 +1534,179 @@ html { scroll-behavior: smooth; }
   button, a, .quiz-option, .editor-tab-btn, .model-filter-btn { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; }
 }
 /* ═══════════════════════════════════════════════════════ */
+
+/* ═══════════════ NAV FIXES ═══════════════ */
+/* Active link */
+.nav-links a.active {
+  color: var(--accent) !important;
+  background: rgba(0,212,255,.12) !important;
+  border-color: rgba(0,212,255,.4) !important;
+}
+/* Hamburger toggle hidden on desktop */
+.nav-toggle { display: none; }
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid rgba(0,212,255,.3);
+    border-radius: 8px;
+    color: var(--accent);
+    cursor: pointer;
+    padding: .35rem .55rem;
+    font-size: 1rem;
+    min-height: 36px;
+    flex-shrink: 0;
+    z-index: 1001;
+  }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 52px;
+    left: 0;
+    right: 0;
+    background: rgba(8,12,22,.97);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    padding: .5rem .75rem .75rem;
+    flex-direction: column;
+    gap: .2rem;
+    z-index: 999;
+    max-height: calc(100vh - 52px);
+    overflow-y: auto;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: .5rem .75rem;
+    font-size: .78rem;
+    border-radius: 8px;
+    border: none;
+  }
+  nav { padding: .4rem .75rem; gap: .5rem; }
+  body { padding-top: 52px; }
+}
+
+/* ═══════════════ SCROLLABLE ELEMENTS ═══════════════ */
+/* All pre/code blocks scroll horizontally */
+pre, .code-block, .sketch-code { overflow-x: auto !important; max-width: 100%; }
+code { white-space: pre; }
+
+/* All tables scroll */
+.table-wrap, table { overflow-x: auto; display: block; max-width: 100%; }
+thead, tbody, tr { display: table; width: 100%; table-layout: fixed; }
+/* Fix for table-layout on display:table */
+table { display: block; overflow-x: auto; white-space: nowrap; }
+table thead, table tbody { display: table; width: 100%; }
+
+/* Canvas containers scroll */
+.sim-canvas-wrap { overflow: hidden; position: relative; }
+#boardanatomy canvas, #ideAnatCanvas, #circuitCanvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Board parts grid scrollable on small */
+.bpart-grid {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Model grid */
+#modelGrid { overflow-x: hidden; }
+
+/* Size compare canvas */
+#sizeCompareCanvas { overflow: visible; }
+
+/* Serial sim */
+.serial-layout { overflow-x: auto; }
+
+/* Syntax highlight areas */
+.code-editor, .editor-area { overflow: auto; }
+
+/* Highlight boxes and analogy boxes */
+.highlight-box, [style*="border-left:4px"] {
+  overflow-x: auto;
+}
+
+/* Cards grids */
+.cards-grid {
+  overflow-x: hidden;
+}
+
+/* Touch scroll improvements */
+.nav-links, pre, .code-block, table, .serial-layout {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ═══════════════ RESPONSIVE IMPROVEMENTS ═══════════════ */
+@media (max-width: 640px) {
+  /* Two-col grids collapse */
+  [style*="grid-template-columns:1fr 1fr"],
+  [style*="grid-template-columns: 1fr 1fr"],
+  .two-col-responsive {
+    grid-template-columns: 1fr !important;
+  }
+  /* Sim layout */
+  .sim-layout { grid-template-columns: 1fr !important; }
+  /* Editor tabs scroll */
+  .editor-tabs { overflow-x: auto; white-space: nowrap; }
+  .editor-tab-btn { display: inline-flex; min-height: 36px; }
+  /* Model filter scrolls */
+  #modelFilters { overflow-x: auto; flex-wrap: nowrap !important; padding-bottom: 4px; }
+  .model-filter-btn { flex-shrink: 0; }
+  /* Cards */
+  .cards-grid { grid-template-columns: 1fr 1fr !important; }
+  /* Board parts */
+  .bpart-grid { grid-template-columns: 1fr 1fr !important; }
+}
+
+@media (max-width: 420px) {
+  .cards-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ═══════════════ PERFORMANCE ═══════════════ */
+/* Hardware accelerate canvases */
+canvas { will-change: contents; }
+/* Smooth nav transition */
+.nav-links { transition: none; }
+.nav-links a { transition: background .15s, color .15s; }
+
+  /* ── MISSING: model-mini-canvas ───────────────────────── */
+  .model-mini-canvas {
+    display: block;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .model-mini-canvas:hover { opacity: 0.85; }
+
+  /* ── MISSING: bpd-desc / bpd-tips (board part detail panel) */
+  .bpd-desc {
+    color: var(--muted);
+    font-size: .85rem;
+    line-height: 1.6;
+    margin: .75rem 0;
+  }
+  .bpd-tips {
+    margin-top: .75rem;
+  }
+
+  /* ── MISSING: board-code-block ─────────────────────────── */
+  .board-code-block {
+    overflow: visible;
+  }
+  .board-code-block pre { overflow-x: auto; }
 </style>
 </head>
 <body>
 <!-- NAV -->
 <nav>
   <div class="nav-logo">⚡ <span>ARDUINO</span>.guide</div>
-  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" onclick="this.closest('nav').querySelector('.nav-links').classList.toggle('open');this.textContent=this.closest('nav').querySelector('.nav-links').classList.contains('open')?'✕':'☰'">☰</button>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" onclick="(function(btn){var ul=btn.closest('nav').querySelector('.nav-links');ul.classList.toggle('open');btn.textContent=ul.classList.contains('open')?'✕':'☰';})(this)">☰</button>
   <ul class="nav-links">
     <li><a href="#boardanatomy">🔬 Board</a></li>
     <li><a href="#ideanatomy">💻 IDE</a></li>
@@ -1888,6 +2044,7 @@ html { scroll-behavior: smooth; }
     <p id="detailDesc"></p>
     <p id="detailUsage"></p>
     <div class="specs" id="detailSpecs"></div>
+    <div id="detailWiring" style="display:none;margin-top:.75rem;padding:.6rem .9rem;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:8px;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent);overflow-x:auto;white-space:pre-wrap;word-break:break-word;"></div>
   </div>
 
   <!-- OHM'S LAW CALCULATOR -->
@@ -1934,8 +2091,8 @@ html { scroll-behavior: smooth; }
       <button class="circuit-tab" onclick="switchCircuit(3,this)">⚡ Series vs Parallel</button>
     </div>
 
-    <div class="circuit-canvas-wrap">
-      <canvas id="circuitCanvas" width="680" height="300"></canvas>
+    <div class="circuit-canvas-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;">
+      <canvas id="circuitCanvas" width="680" height="300" style="display:block;min-width:480px;max-width:100%;height:auto;"></canvas>
     </div>
 
     <div class="circuit-info" id="circuitInfo">
@@ -3456,7 +3613,7 @@ error: invalid conversion from 'int*' to 'int'" oninput="diagnoseError()"></text
       <div style="padding:.75rem;background:rgba(255,255,255,.03);border-radius:8px;">
         <strong style="color:#ff4757;font-size:.82rem;">Uno Pins: only 2 and 3</strong>
         <p style="font-size:.75rem;color:var(--muted);margin:.4rem 0 0;line-height:1.6;">INT0=pin2, INT1=pin3. Mega adds 18,19,20,21. Nano 33 BLE any pin. Modes: RISING, FALLING, CHANGE, LOW.</p>
-        <pre style="font-size:.65rem;color:#8892b0;margin:.5rem 0 0;">volatile bool fired = false;
+        <pre style="overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch;" style="font-size:.65rem;color:#8892b0;margin:.5rem 0 0;">volatile bool fired = false;
 void myISR() { fired = true; }
 attachInterrupt(
   digitalPinToInterrupt(2),
@@ -3708,15 +3865,18 @@ attachInterrupt(
   <p class="section-lead">Every official Arduino board ever made — specs, use cases, and what makes each one unique. From the classic Uno to the professional Portenta.</p>
 
   <!-- Filter toolbar -->
-  <div id="modelFilters" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;">
+  <div id="modelFilters" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem;">
     <button class="model-filter-btn active" data-cat="all" onclick="filterModels('all')">All Boards</button>
-    <button class="model-filter-btn" data-cat="classic" onclick="filterModels('classic')">⬡ Classic</button>
+    <button class="model-filter-btn" data-cat="classic" onclick="filterModels('classic')">⬡ Classic/Uno</button>
     <button class="model-filter-btn" data-cat="nano" onclick="filterModels('nano')">🔹 Nano</button>
     <button class="model-filter-btn" data-cat="mkr" onclick="filterModels('mkr')">📶 MKR</button>
     <button class="model-filter-btn" data-cat="mega" onclick="filterModels('mega')">🔲 Mega</button>
-    <button class="model-filter-btn" data-cat="pro" onclick="filterModels('pro')">🚀 Pro</button>
-    <button class="model-filter-btn" data-cat="iot" onclick="filterModels('iot')">📡 IoT</button>
-  </div>
+    <button class="model-filter-btn" data-cat="pro" onclick="filterModels('pro')">⚙️ Pro/Portenta</button>
+    <button class="model-filter-btn" data-cat="lilypad" onclick="filterModels('lilypad')">🌸 LilyPad</button>
+    <button class="model-filter-btn" data-cat="iot" onclick="filterModels('iot')">📡 IoT/WiFi</button>
+    <button class="model-filter-btn" data-cat="historic" onclick="filterModels('historic')">🏛️ Historic</button>
+    <button class="model-filter-btn" data-cat="education" onclick="filterModels('education')">🎓 Education</button>
+  </div>/div>
 
   <!-- Compare panel -->
   <div id="comparePanel" style="display:none;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.15);border-radius:16px;padding:1.25rem;margin-bottom:1.5rem;">
@@ -3955,34 +4115,123 @@ attachInterrupt(
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  document.getElementById('readProgress').style.width = (scrollTop/docHeight*100)+'%';
+  const rp = document.getElementById('readProgress');
+  if(rp) rp.style.width = (docHeight>0 ? scrollTop/docHeight*100 : 0)+'%';
   const btn = document.getElementById('backTop');
-  scrollTop > 300 ? btn.classList.add('show') : btn.classList.remove('show');
-});
+  if(btn) scrollTop > 300 ? btn.classList.add('show') : btn.classList.remove('show');
+}, {passive:true});
 
 // ═══════════════════════════════════════════════════
 //  COMPONENTS DATA
 // ═══════════════════════════════════════════════════
 const components = [
-  { icon:'💡', name:'LED', desc:'Light Emitting Diode. A semiconductor device that emits light when current flows through it.', usage:'Used as indicators, status lights, and in light-dependent projects. Always needs a current-limiting resistor.', specs:['2–3.3V forward voltage','10–20mA typical current','220Ω–1kΩ resistor needed'] },
-  { icon:'⬛', name:'Resistor', desc:'A passive component that limits (resists) the flow of electrical current in a circuit.', usage:'Protects LEDs and other components, creates voltage dividers, sets bias currents.', specs:['Rated in Ohms (Ω)','Color bands = value','1/4W common for 5V circuits'] },
-  { icon:'🔘', name:'Button', desc:'A momentary tactile switch that connects two points when pressed and disconnects when released.', usage:'User input — detecting presses to trigger actions. Use with INPUT_PULLUP for simpler wiring.', specs:['Normally open (NO)','Use 10kΩ pull-down or INPUT_PULLUP','Bounces: use debounce logic'] },
-  { icon:'🌀', name:'Potentiometer', desc:'A variable resistor with 3 terminals. Rotating the knob changes the resistance between outer and center pins.', usage:'Manual control of values — volume, speed, brightness. Connect to analog pin for 0–1023 reading.', specs:['Common: 10kΩ','3 pins: GND, signal, 5V','analogRead() gives 0–1023'] },
-  { icon:'🌡️', name:'Thermistor / TMP36', desc:'A temperature-sensitive resistor (thermistor) or analog IC sensor (TMP36) that changes output based on heat.', usage:'Temperature monitoring projects, thermostats, weather stations.', specs:['TMP36: −40°C to 125°C','0°C = 0.5V output','Voltage formula: Temp°C = (V-0.5)×100'] },
-  { icon:'📸', name:'Photoresistor (LDR)', desc:'Light Dependent Resistor — resistance decreases as light increases. Also called a photodiode or LDR.', usage:'Light detection, automatic lighting, line-following robots.', specs:['10kΩ in dark, <1kΩ in light','Use as voltage divider','analogRead() for light level'] },
-  { icon:'📳', name:'Buzzer', desc:'A piezoelectric element that vibrates at a set frequency to produce a sound. Active buzzers have internal oscillator; passive ones need a PWM signal.', usage:'Alarms, feedback tones, melody playing.', specs:['Active: just digitalWrite','Passive: use tone() function','3–5V operating voltage'] },
-  { icon:'🔄', name:'Servo Motor', desc:'A motor with built-in gearing and position feedback. Controlled by a PWM signal to rotate to a specific angle (0–180°).', usage:'Robotic arms, camera panning, door mechanisms.', specs:['Signal: 50Hz PWM','0°→1ms, 90°→1.5ms, 180°→2ms','Servo.h library built-in'] },
-  { icon:'📺', name:'LCD Display', desc:'Liquid Crystal Display module — typically a 16×2 (16 chars, 2 rows) display controlled via I2C or parallel interface.', usage:'Displaying sensor values, messages, menus.', specs:['16×2 or 20×4 common','I2C module needs only 2 wires','LiquidCrystal_I2C library'] },
-  { icon:'📡', name:'Ultrasonic Sensor', desc:'The HC-SR04 sends an ultrasonic pulse and measures the echo time to calculate distance.', usage:'Obstacle avoidance, distance measurement, parking sensors, robotics.', specs:['2cm–400cm range','~3mm accuracy','Uses Trig + Echo pins'] },
-  { icon:'🔌', name:'Capacitor', desc:'Stores electrical energy in an electric field. Acts as a tiny rechargeable battery or a high-pass/low-pass filter.', usage:'Debouncing, smoothing power supply, filtering noise from motors.', specs:['Measured in Farads (F)','Electrolytic: polarized!','100µF common for power filtering'] },
-  { icon:'↕️', name:'Transistor', desc:'A semiconductor that acts as an electronic switch or amplifier. NPN type is most common in Arduino projects.', usage:'Controlling high-current devices (motors, relays, high-power LEDs) with Arduino pins.', specs:['Common: 2N2222, BC547, NPN','Base current controls collector','R needed on base: ~1kΩ'] },
+  { icon:'💡', name:'LED',
+    desc:'Light Emitting Diode. Emits light when current flows anode (+) to cathode (−). Long leg = anode. Short leg = cathode (also marked by flat edge on rim).',
+    usage:'Status indicators, signal lights, displays. Every project needs at least one!',
+    specs:['Forward voltage: 2V (red) – 3.3V (blue/white)','Current: 10–20mA typical','Always use 220Ω–1kΩ resistor in series','Max 40mA per Arduino pin — use transistor for strips'],
+    wiring:'Pin 13 → 220Ω → LED (+) → LED (−) → GND'},
+  { icon:'🟫', name:'Resistor',
+    desc:'Limits current flow. Value in Ohms (Ω). Color bands: Brown-Black-Red = 1kΩ. Gold stripe = 5% tolerance. Essential companion to every LED and many sensors.',
+    usage:'Protect LEDs, voltage dividers, pull-up/pull-down inputs, bias currents.',
+    specs:['Common: 220Ω, 1kΩ, 10kΩ, 100kΩ','Power: 1/4W for 5V circuits','V=IR: 5V÷220Ω = 22.7mA','Color code: Bk-Br-R-O-Y-G-B-V-Gr-W'],
+    wiring:'In series between pin and load'},
+  { icon:'🔘', name:'Push Button',
+    desc:'Momentary switch — connects while pressed, disconnects when released. 4-pin DIP type: 2 pairs internally connected. Press bridges the gap.',
+    usage:'User input, trigger actions, menus, start/stop controls.',
+    specs:['Normally Open (NO) — default state','Debounce: 1–5ms of bounce noise','Use INPUT_PULLUP to simplify wiring','50mA / 12V rated typical'],
+    wiring:'Pin 2 (INPUT_PULLUP) → Button → GND. No resistor needed with INPUT_PULLUP'},
+  { icon:'🌀', name:'Potentiometer',
+    desc:'Variable resistor with wiper — turning the shaft moves the wiper between GND and 5V, giving 0–5V on the middle pin. Perfect analog knob.',
+    usage:'Brightness control, volume, speed, angle. Any manual analog adjustment.',
+    specs:['Common: 10kΩ linear taper','analogRead() → 0 to 1023','Resolution: ~4.9mV per step','Rotary or slide variants available'],
+    wiring:'5V → Pin1 | Wiper → A0 | Pin3 → GND'},
+  { icon:'🌡️', name:'TMP36 Temperature Sensor',
+    desc:'Analog IC sensor outputting 10mV per °C, with 500mV offset. Accurate to ±2°C from −40°C to 125°C. No calibration needed.',
+    usage:'Weather stations, thermostats, over-temperature alerts, fan speed control.',
+    specs:['Output: 0.5V at 0°C, 10mV/°C','Formula: °C = (Vout−0.5)×100','3 pins: VCC, Vout, GND','Uses flat face to identify pinout!'],
+    wiring:'VCC→5V | Vout→A0 | GND→GND. Formula: float c=(analogRead(A0)*5.0/1024.0−0.5)*100;'},
+  { icon:'☀️', name:'Photoresistor (LDR)',
+    desc:'Light Dependent Resistor. High resistance in dark (~1MΩ), low resistance in bright light (~100Ω). Use in a voltage divider to get analog reading.',
+    usage:'Auto-brightness, night lights, intruder alarms, line-following robots.',
+    specs:['Dark: ~1MΩ | Bright: ~100Ω','No polarity — works either way','Pair with 10kΩ fixed resistor','analogRead: 0=dark, 1023=bright'],
+    wiring:'5V → LDR → A0 (with 10kΩ from A0 to GND)'},
+  { icon:'🔊', name:'Piezo Buzzer',
+    desc:'Converts electrical pulses into sound via piezoelectric vibration. Active buzzers buzz at a fixed frequency when powered. Passive buzzers need tone() to make sound.',
+    usage:'Alerts, alarms, musical notes, button-click feedback.',
+    specs:['Active: just apply 5V','Passive: use tone(pin, freq, ms)','Frequency range: 1Hz–20kHz','Current: ~20–30mA'],
+    wiring:'Pin 8 → Buzzer(+) | Buzzer(−) → GND. Use tone(8, 440, 500) for A4 note'},
+  { icon:'🔋', name:'Capacitor',
+    desc:'Stores charge like a tiny battery. Electrolytic caps are polarized (stripe = negative). Ceramics are non-polarized. Critical for stable power supply.',
+    usage:'Power decoupling (100nF near every IC), button debounce, audio filtering, delay circuits.',
+    specs:['100nF ceramic: bypass/decoupling','100µF electrolytic: bulk filtering','Polarized: stripe = (−) leg','Voltage rating > circuit voltage!'],
+    wiring:'100nF between VCC and GND near each chip pin'},
+  { icon:'🔺', name:'NPN Transistor (2N2222)',
+    desc:'Electronic switch. A small base current (via 1kΩ from Arduino pin) controls a large collector→emitter current. Saturates (fully ON) when base is HIGH.',
+    usage:'Drive motors, high-power LEDs, relay coils — anything over 40mA.',
+    specs:['2N2222: 600mA collector, 30V','Base resistor: 1kΩ from Arduino','hFE gain: ~100–300 × base I','Pinout: EBC (check datasheet!)'],
+    wiring:'Pin → 1kΩ → Base | Load+ → Collector | Emitter → GND'},
+  { icon:'⚡', name:'Diode (1N4001)',
+    desc:'One-way valve for current. Anode (+) to cathode (−, stripe end). 0.7V forward drop. Flyback diodes protect Arduino from motor back-EMF spikes.',
+    usage:'Reverse polarity protection, flyback across motor/relay, rectifying AC to DC.',
+    specs:['Forward drop: ~0.7V','1N4001: 50V, 1A','Stripe = cathode (−)','Flyback: across motor terminals'],
+    wiring:'Across motor: cathode to (+), anode to (−). Power protection: in series with VCC'},
+  { icon:'🔄', name:'DC Motor',
+    desc:'Converts electricity to rotation. Speed proportional to voltage; swap wires for reverse direction. Cannot connect directly to Arduino pin — needs driver IC.',
+    usage:'Robots, fans, conveyors, pumps. Pair with L298N or L9110S driver.',
+    specs:['Typical: 3–12V, 100mA–2A','Arduino pin max 40mA — use driver!','L298N: dual H-bridge, 2A per ch','PWM pin controls speed via ENA'],
+    wiring:'Arduino → L298N(IN1,IN2,ENA) → Motor terminals'},
+  { icon:'🔧', name:'Servo Motor (SG90)',
+    desc:'Geared DC motor with position feedback. PWM signal every 20ms: 1ms pulse = 0°, 1.5ms = 90°, 2ms = 180°. Servo library handles all timing automatically.',
+    usage:'Robotic arms, steering, camera gimbals, door locks, linear actuators.',
+    specs:['Range: 0°–180°','SG90: 1.8kg·cm stall torque','Signal: orange/yellow wire','Power from 5V — external for >1 servo'],
+    wiring:'Signal→PWM pin | Red→5V | Brown→GND. #include <Servo.h> s.attach(9); s.write(90);'},
+  { icon:'📡', name:'HC-SR04 Ultrasonic',
+    desc:'Sends 40kHz ultrasonic pulse, measures echo return time. Two sensors: Trigger sends pulse, Echo pin goes HIGH for duration proportional to distance.',
+    usage:'Obstacle avoidance, distance sensing, liquid level, parking sensors.',
+    specs:['Range: 2cm – 400cm (±3mm)','Trigger: 10µs HIGH pulse','Echo width = travel time','Formula: cm = pulseIn(echo,HIGH)/58'],
+    wiring:'VCC→5V | GND→GND | Trig→pin9 | Echo→pin8. duration=pulseIn(8,HIGH); cm=duration/58;'},
+  { icon:'📺', name:'16×2 LCD (I2C)',
+    desc:'16-character 2-row character display with HD44780 controller. I2C backpack (PCF8574) reduces wiring to just 4 wires. Adjustable contrast and backlight.',
+    usage:'Display sensor values, menus, status messages, debug output.',
+    specs:['I2C addr: 0x27 or 0x3F','Library: LiquidCrystal_I2C','16×2 = 32 character cells','Contrast set by trimmer on backpack'],
+    wiring:'VCC→5V | GND→GND | SDA→A4 | SCL→A5. lcd.begin(16,2); lcd.print("Hello");'},
+  { icon:'🔮', name:'OLED Display (SSD1306)',
+    desc:'128×64 pixel monochrome OLED via I2C. No backlight — pixels emit their own light. Crisp, readable in all lighting. Adafruit GFX library for graphics.',
+    usage:'Mini dashboards, sensor displays, wearables, status panels.',
+    specs:['128×64 px, 0.96" typical','I2C: 0x3C or 0x3D address','Very low power: ~20mA','Adafruit_SSD1306 library required'],
+    wiring:'VCC→3.3V | GND→GND | SDA→A4 | SCL→A5. display.drawPixel(x,y,WHITE); display.display();'},
+  { icon:'📶', name:'HC-05 Bluetooth Module',
+    desc:'UART-to-Bluetooth 2.0 bridge. AT commands configure baud rate, name, PIN. HC-05 can be master or slave; HC-06 is slave-only. 3.3V logic on RX pin!',
+    usage:'Phone app control, wireless serial, BT keyboard/mouse, wireless data.',
+    specs:['Range: ~10m','Default baud: 9600 (HC-06) or 38400 (HC-05)','RX pin: 3.3V — use voltage divider!','Pair code default: 1234'],
+    wiring:'VCC→5V | GND→GND | TX→pin0(RX) | RX→voltage divider→pin1(TX)'},
+  { icon:'🌊', name:'Soil Moisture Sensor',
+    desc:'Two stainless probes measure soil conductivity. Dry soil = high resistance = low output. Analog output proportional to moisture. Resistive type corrodes; capacitive preferred.',
+    usage:'Smart plant watering, garden automation, drought monitoring.',
+    specs:['AO: analog (0–1023)','DO: digital threshold (via trimmer)','Dry: high reading, Wet: low reading','5V VCC, power only when reading to reduce corrosion'],
+    wiring:'VCC→5V | GND→GND | AO→A0. if(analogRead(A0)>700) pump=true;'},
+  { icon:'🧲', name:'Reed Switch / Hall Sensor',
+    desc:'Reed switch: mechanical contacts close when magnet is nearby — like a button operated by a magnet. Hall effect sensor (A3144) detects magnetic fields electronically.',
+    usage:'Door/window alarms, gear tooth counting, RPM measurement, liquid flow meters.',
+    specs:['Reed: 0.5A, 10W, 100V','A3144 Hall: digital output, 3–24V','Use INPUT_PULLUP for reed switch','attachInterrupt for fast pulse counting'],
+    wiring:'Reed: Pin → switch → GND (INPUT_PULLUP). Hall: VCC→5V | GND→GND | OUT→interrupt pin'},
+  { icon:'💾', name:'SD Card Module',
+    desc:'SPI interface for reading/writing FAT16/FAT32 microSD cards. Stores files up to 32GB. Built-in level shifter for 3.3V card from 5V Arduino.',
+    usage:'Data logging, config files, audio samples, storing large sensor history.',
+    specs:['SPI: MOSI=11, MISO=12, SCK=13','CS pin: any digital pin (10 typical)','FAT16/FAT32 formatted','Max reliable: 32GB cards'],
+    wiring:'VCC→5V | GND→GND | CS→10 | MOSI→11 | MISO→12 | SCK→13. SD.begin(10);'},
+  { icon:'🔁', name:'Relay Module',
+    desc:'Electromagnetically controlled switch. Arduino drives the coil (5V, ~70mA) which switches HIGH-voltage AC or DC contacts (up to 250V AC / 10A).',
+    usage:'Control mains appliances, 12V lights, motors, solenoids, HVAC from Arduino.',
+    specs:['Coil: 5V, ~70mA (use transistor)','Contacts: NO, NC, COM','10A / 250V AC or 30V DC','Flyback diode across coil!'],
+    wiring:'Pin → 1kΩ → transistor base → relay coil. Diode across coil. Load on NO/COM contacts'},
 ];
 
 const grid = document.getElementById('componentsGrid');
 const detail = document.getElementById('componentDetail');
 let selectedComp = -1;
 
-components.forEach((c,i) => {
+if(grid) components.forEach((c,i) => {
   const el = document.createElement('div');
   el.className = 'component-card';
   el.innerHTML = `<span class="component-icon">${c.icon}</span><div class="component-name">${c.name}</div><div class="component-desc">${c.desc.split('.')[0]}.</div>`;
@@ -3994,13 +4243,17 @@ function selectComponent(i, el) {
   document.querySelectorAll('.component-card').forEach(c=>c.classList.remove('selected'));
   el.classList.add('selected');
   const c = components[i];
-  document.getElementById('detailName').textContent = c.icon + ' ' + c.name;
-  document.getElementById('detailDesc').textContent = c.desc;
-  document.getElementById('detailUsage').innerHTML = '<strong style="color:var(--accent2)">When to use: </strong>' + c.usage;
-  const specsEl = document.getElementById('detailSpecs');
-  specsEl.innerHTML = c.specs.map(s=>`<span class="spec-tag">${s}</span>`).join('');
-  detail.classList.add('visible');
-  detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+  const dn=document.getElementById('detailName');
+  const dd=document.getElementById('detailDesc');
+  const du=document.getElementById('detailUsage');
+  const ds=document.getElementById('detailSpecs');
+  if(dn) dn.textContent = c.icon + ' ' + c.name;
+  if(dd) dd.textContent = c.desc;
+  if(du) du.innerHTML = '<strong style="color:var(--accent2)">When to use: </strong>' + c.usage;
+  if(ds) ds.innerHTML = c.specs.map(s=>`<span class="spec-tag">${s}</span>`).join('');
+  const dw=document.getElementById('detailWiring');
+  if(dw){ if(c.wiring){dw.textContent='🔌 Wiring: '+c.wiring; dw.style.display='block';}else dw.style.display='none'; }
+  if(detail){ detail.classList.add('visible'); detail.scrollIntoView({behavior:'smooth', block:'nearest'}); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -4043,7 +4296,7 @@ function clearCalc() {
 //  CIRCUIT ANIMATOR
 // ═══════════════════════════════════════════════════
 const canvas = document.getElementById('circuitCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas ? canvas.getContext('2d') : null;
 
 const circuitData = [
   {
@@ -4075,15 +4328,22 @@ let flowOffset = 0;
 
 function switchCircuit(idx, el) {
   currentCircuit = idx;
-  document.querySelectorAll('.circuit-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+  frame = 0;
   flowOffset = 0;
+  document.querySelectorAll('.circuit-tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
   const d = circuitData[idx];
-  document.getElementById('howItWorks').innerHTML = d.how.map(h=>`<li>${h}</li>`).join('');
-  document.getElementById('keyPoints').innerHTML = d.key.map(k=>`<li>${k}</li>`).join('');
+  const hw = document.getElementById('howItWorks');
+  const kp = document.getElementById('keyPoints');
+  if(hw) hw.innerHTML = d.how.map(h=>`<li>${h}</li>`).join('');
+  if(kp) kp.innerHTML = d.key.map(k=>`<li>${k}</li>`).join('');
 }
+window.switchCircuit = switchCircuit;
 
 function drawLedCircuit(t) {
+  if(!ctx)return;
+  ctx.save();
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
   const w = canvas.width, h = canvas.height;
   ctx.clearRect(0,0,w,h);
   ctx.strokeStyle = '#2a3560'; ctx.lineWidth = 1;
@@ -4174,9 +4434,13 @@ function drawLedCircuit(t) {
   // Labels
   ctx.fillStyle = '#00d4ff'; ctx.font = '9px \"Space Mono\",monospace'; ctx.textAlign = 'left';
   ctx.fillText('→ 5V', 125, cy-6);
+  ctx.restore();
 }
 
 function drawButtonCircuit(t) {
+  if(!ctx)return;
+  ctx.save();
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
   const w=canvas.width, h=canvas.height;
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle='#0a0e1a'; ctx.fillRect(0,0,w,h);
@@ -4255,9 +4519,13 @@ function drawButtonCircuit(t) {
   for(let i=0;i<3;i++){const hw=12-i*3; ctx.beginPath(); ctx.moveTo(190-hw,cy+80+i*6); ctx.lineTo(190+hw,cy+80+i*6); ctx.stroke();}
   ctx.fillStyle='#8892b0'; ctx.font='9px \"Space Mono\",monospace'; ctx.textAlign='center';
   ctx.fillText('GND',190,cy+108);
+  ctx.restore();
 }
 
 function drawDividerCircuit(t) {
+  if(!ctx)return;
+  ctx.save();
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
   const w=canvas.width, h=canvas.height;
   ctx.clearRect(0,0,w,h); ctx.fillStyle='#0a0e1a'; ctx.fillRect(0,0,w,h);
 
@@ -4328,9 +4596,13 @@ function drawDividerCircuit(t) {
   ctx.fillText('10V',barX+10,barY-5);
   ctx.fillText('5V',barX+10,barY+barH/2-4);
   ctx.fillText('0V',barX+10,barY+barH+12);
+  ctx.restore();
 }
 
 function drawSeriesParallelCircuit(t) {
+  if(!ctx)return;
+  ctx.save();
+  ctx.shadowBlur=0;ctx.shadowColor='transparent';
   const w=canvas.width, h=canvas.height;
   ctx.clearRect(0,0,w,h); ctx.fillStyle='#0a0e1a'; ctx.fillRect(0,0,w,h);
 
@@ -4414,6 +4686,7 @@ function drawSeriesParallelCircuit(t) {
   // Voltage labels
   ctx.fillStyle='#00d4ff'; ctx.font='bold 10px \"Space Mono\",monospace'; ctx.textAlign='center';
   ctx.fillText('5V',370,70); ctx.fillText('GND',370,230);
+  ctx.restore();
 }
 
 function roundRect(ctx,x,y,w,h,r){
@@ -4430,16 +4703,38 @@ function roundRect(ctx,x,y,w,h,r){
 }
 
 let frame=0;
-function animateCircuit(){
-  circuitData[currentCircuit].draw(frame);
-  frame++;
-  requestAnimationFrame(animateCircuit);
+let _circLastTs=0;
+let _circRafId=null;
+let _circVisible=false;
+const CIRC_FPS=1000/36;
+
+function animateCircuit(ts){
+  if(!ctx||!_circVisible){_circRafId=null;return;}
+  if(ts-_circLastTs>=CIRC_FPS){
+    _circLastTs=ts;
+    ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';
+    circuitData[currentCircuit].draw(frame);
+    ctx.restore();
+    frame++;
+  }
+  _circRafId=requestAnimationFrame(animateCircuit);
+}
+function _startCircuit(){
+  if(!_circRafId&&_circVisible) _circRafId=requestAnimationFrame(animateCircuit);
+}
+if(canvas){
+  const _co=new IntersectionObserver(entries=>{
+    _circVisible=entries[0].isIntersecting;
+    if(_circVisible)_startCircuit();
+  },{threshold:0.05});
+  _co.observe(canvas);
 }
 
 // Init circuit info
-document.getElementById('howItWorks').innerHTML = circuitData[0].how.map(h=>`<li>${h}</li>`).join('');
-document.getElementById('keyPoints').innerHTML = circuitData[0].key.map(k=>`<li>${k}</li>`).join('');
-animateCircuit();
+const _hw=document.getElementById('howItWorks');
+const _kp=document.getElementById('keyPoints');
+if(_hw)_hw.innerHTML=circuitData[0].how.map(h=>`<li>${h}</li>`).join('');
+if(_kp)_kp.innerHTML=circuitData[0].key.map(k=>`<li>${k}</li>`).join('');
 
 // ═══════════════════════════════════════════════════
 //  CODE EDITOR + VISUAL SIMULATOR
@@ -4572,6 +4867,9 @@ let currentSnippet = 0;
 let simRunning = false;
 let simAnimId = null;
 let simFrame = 0;
+let simTime = 0;        // FIX: was undeclared → caused NaN cascade
+let simAnimFrame = 0;   // FIX: was undeclared
+let _simLastTs = 0;     // FIX: was undeclared
 let simOutputLines = [];
 let simOutputIdx = 0;
 let simOutputTid = null;
@@ -4599,46 +4897,117 @@ function getSpeed() {
 // ────────────────────────────────────────────────────
 
 function drawArduinoBoard(ctx, x, y, w, h, ledOn, ledColor) {
-  // Board body
-  ctx.fillStyle = '#1a5c38';
-  ctx.strokeStyle = '#2ca86e';
-  ctx.lineWidth = 2;
-  roundRectSim(ctx, x, y, w, h, 8);
-  ctx.fill(); ctx.stroke();
-  // Board label
-  ctx.fillStyle = '#ffffff30';
-  ctx.font = 'bold 9px \"Space Mono\",monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('ARDUINO UNO', x + w/2, y + h - 8);
-  // USB port
-  ctx.fillStyle = '#888';
-  ctx.fillRect(x - 12, y + h/2 - 8, 12, 16);
-  ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1;
-  ctx.strokeRect(x - 12, y + h/2 - 8, 12, 16);
-  // Pins top
-  ctx.fillStyle = '#c8a040';
-  for(let i=0; i<8; i++) ctx.fillRect(x + 8 + i*10, y - 6, 6, 8);
-  // Pins bottom
-  for(let i=0; i<8; i++) ctx.fillRect(x + 8 + i*10, y + h - 2, 6, 8);
-  // Power LED
-  ctx.fillStyle = '#00ff88';
-  ctx.shadowColor = '#00ff88'; ctx.shadowBlur = 8;
-  ctx.beginPath(); ctx.arc(x + 14, y + 14, 4, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur = 0;
-  // Pin 13 LED
-  if(ledOn) {
-    ctx.shadowColor = ledColor || '#ff6b35'; ctx.shadowBlur = 20;
-    ctx.fillStyle = ledColor || '#ff6b35';
-  } else {
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#333';
+  if(!ctx) return;
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
+  // Scale factor (base design at 85×66 canvas)
+  const sx = w/85, sy = h/66;
+  function px(v){return x+v*sx;} function py(v){return y+v*sy;}
+  function rect(rx,ry,rw,rh,fill,stroke,lw){
+    ctx.fillStyle=fill||'transparent'; ctx.strokeStyle=stroke||'transparent'; ctx.lineWidth=lw||1;
+    if(fill!==undefined&&fill!=='none') ctx.fillRect(px(rx),py(ry),rw*sx,rh*sy);
+    if(stroke!==undefined&&stroke!=='none') ctx.strokeRect(px(rx),py(ry),rw*sx,rh*sy);
   }
-  ctx.beginPath(); ctx.arc(x + 28, y + 14, 5, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur = 0;
-  // Pin 13 label
-  ctx.fillStyle = ledOn ? (ledColor||'#ff6b35') : '#555';
-  ctx.font = '7px \"Space Mono\",monospace'; ctx.textAlign = 'center';
-  ctx.fillText('L', x + 28, y + 31);
+  function circle(cx,cy,r,fill,stroke,lw){
+    ctx.fillStyle=fill||'transparent'; ctx.strokeStyle=stroke||'transparent'; ctx.lineWidth=lw||1;
+    ctx.beginPath(); ctx.arc(px(cx),py(cy),r*Math.min(sx,sy),0,Math.PI*2);
+    if(fill!=='none') ctx.fill(); if(stroke!=='none'&&stroke) ctx.stroke();
+  }
+  // PCB board (green)
+  const brd = ctx.createLinearGradient(px(0),py(0),px(85),py(66));
+  brd.addColorStop(0,'#1f7a48'); brd.addColorStop(1,'#145535');
+  ctx.fillStyle=brd;
+  ctx.strokeStyle='#2db870'; ctx.lineWidth=1;
+  const cn=3*Math.min(sx,sy);
+  ctx.beginPath();
+  ctx.moveTo(px(4),py(0)); ctx.lineTo(px(81),py(0));
+  ctx.arcTo(px(85),py(0),px(85),py(4),cn);
+  ctx.lineTo(px(85),py(62)); ctx.arcTo(px(85),py(66),px(81),py(66),cn);
+  ctx.lineTo(px(4),py(66)); ctx.arcTo(px(0),py(66),px(0),py(62),cn);
+  ctx.lineTo(px(0),py(4)); ctx.arcTo(px(0),py(0),px(4),py(0),cn);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  // Silk screen text
+  ctx.fillStyle='rgba(255,255,255,.12)'; ctx.font=`bold ${Math.round(3.5*sy)}px monospace`; ctx.textAlign='left';
+  ctx.fillText('UNO', px(36), py(63));
+  // Mounting holes
+  [[3,3],[3,63],[82,3],[82,63]].forEach(([hx,hy])=>{
+    circle(hx,hy,2.2,'#0a1a10','#1a5a30',0.5);
+    circle(hx,hy,1,'#07100a','none');
+  });
+  // USB-B port (left edge, projects out)
+  rect(-8,22,10,18,'#555','#888',0.5);
+  rect(-6,24,8,14,'#1a1a1a','#333',0.5);
+  // USB connector hole detail
+  ctx.fillStyle='#111'; ctx.fillRect(px(-4),py(26),3*sx,10*sy);
+  // DC barrel jack
+  rect(-7,44,9,9,'#222','#444',0.5);
+  circle(-3,48.5,3,'#1a1a1a','#555',0.5);
+  circle(-3,48.5,1.5,'#333','none');
+  circle(-3,48.5,0.5,'#888','none');
+  // Voltage regulator (TO-92/TO-220 style black box)
+  rect(7,48,8,10,'#1a1a1a','#333',0.5);
+  // 3 legs
+  ctx.fillStyle='#888';
+  [8,11,14].forEach(lx=>ctx.fillRect(px(lx),py(58),1.5*sx,5*sy));
+  ctx.fillStyle='rgba(255,255,255,.15)'; ctx.font=`${Math.round(3*sy)}px monospace`; ctx.textAlign='center';
+  ctx.fillText('REG',px(11),py(56));
+  // Reset button (small tact switch)
+  rect(18,40,8,8,'#d0d0c0','#888',0.5);
+  circle(22,44,2.5,'#b0a090','#776655',0.5);
+  // ATmega16U2 (USB-serial chip, small square)
+  rect(16,10,16,12,'#0c0c1e','#2a2a4a',0.5);
+  ctx.fillStyle='rgba(255,255,255,.3)'; ctx.font=`${Math.round(3*sy)}px monospace`; ctx.textAlign='center';
+  ctx.fillText('16U2',px(24),py(17));
+  // 4 LEDs row
+  const leds=[
+    {lx:6, color:'#00dd66', on:true, label:'ON'},
+    {lx:10, color:'#f5c518', on:false, label:'TX'},
+    {lx:14, color:'#f5c518', on:false, label:'RX'},
+    {lx:18, color:ledColor||'#ff8c00', on:ledOn, label:'L'},
+  ];
+  leds.forEach(({lx,color,on,label})=>{
+    if(on){ ctx.shadowColor=color; ctx.shadowBlur=6*Math.min(sx,sy); }
+    circle(lx,6,1.8, on?color:'#1a1a1a', on?color:'#333', 0.5);
+    ctx.shadowBlur=0;
+    ctx.fillStyle=on?color:'#444'; ctx.font=`${Math.round(2.8*sy)}px monospace`; ctx.textAlign='center';
+    ctx.fillText(label,px(lx),py(12));
+  });
+  // ATmega328P (large DIP/QFP chip, center of board)
+  rect(38,22,22,22,'#0a0a1c','#2a2a4a',1);
+  // Chip legs (left and right)
+  ctx.fillStyle='#666';
+  for(let i=0;i<4;i++){
+    ctx.fillRect(px(36),py(24+i*5.5),2*sx,2.5*sy);
+    ctx.fillRect(px(60),py(24+i*5.5),2*sx,2.5*sy);
+  }
+  // Pin 1 dot
+  ctx.fillStyle='#999'; ctx.beginPath(); ctx.arc(px(40),py(24),1.2*Math.min(sx,sy),0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.45)'; ctx.font=`bold ${Math.round(3.5*sy)}px monospace`; ctx.textAlign='center';
+  ctx.fillText('328P',px(49),py(33));
+  ctx.font=`${Math.round(2.8*sy)}px monospace`;
+  ctx.fillText('ATmega',px(49),py(28.5));
+  // 16MHz Crystal (silver can, right of 328P)
+  rect(64,28,8,5,'#c8c8c8','#888',0.5);
+  ctx.fillStyle='rgba(0,0,0,.4)'; ctx.font=`${Math.round(2.8*sy)}px monospace`; ctx.textAlign='center';
+  ctx.fillText('16M',px(68),py(32.5));
+  // ICSP header (2×3, right side)
+  ctx.fillStyle='#222'; ctx.fillRect(px(72),py(36),10*sx,8*sy);
+  ctx.fillStyle='#c8a000';
+  [[74,38],[77,38],[80,38],[74,41],[77,41],[80,41]].forEach(([hx,hy])=>{
+    ctx.beginPath(); ctx.arc(px(hx),py(hy),1.5*Math.min(sx,sy),0,Math.PI*2); ctx.fill();
+  });
+  // Top digital pins (14 pins)
+  ctx.fillStyle='#c8a000';
+  for(let i=0;i<14;i++) ctx.fillRect(px(6+i*5.7),py(-3),2.5*sx,4*sy);
+  ctx.fillStyle='#222';
+  for(let i=0;i<14;i++) ctx.fillRect(px(6+i*5.7),py(-1),2.5*sx,3*sy);
+  // Bottom power + analog pins
+  ['V+','GND','GND','5V','3V','RST'].forEach((lbl,i)=>{
+    ctx.fillStyle='#c8a000'; ctx.fillRect(px(6+i*5.7),py(65),2.5*sx,4*sy);
+  });
+  ['A0','A1','A2','A3','A4','A5'].forEach((lbl,i)=>{
+    ctx.fillStyle='#c8a000'; ctx.fillRect(px(40+i*5.7),py(65),2.5*sx,4*sy);
+  });
+  ctx.restore();
 }
 
 function roundRectSim(ctx, x, y, w, h, r) {
@@ -4667,6 +5036,8 @@ function hexAlpha(color, alpha) {
 }
 
 function drawLED(ctx, x, y, r, on, color) {
+  if(!ctx) return;
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
   const c = color || '#ff6b35';
   // Outer glow
   if(on) {
@@ -4689,9 +5060,12 @@ function drawLED(ctx, x, y, r, on, color) {
     ctx.fillStyle = 'rgba(255,255,255,.4)';
     ctx.beginPath(); ctx.arc(x - r*.3, y - r*.3, r*.35, 0, Math.PI*2); ctx.fill();
   }
-}
+
+  ctx.restore();}
 
 function drawWire(ctx, x1, y1, x2, y2, color, flowing, t) {
+  if(!ctx) return;
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
   ctx.strokeStyle = color; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
   if(flowing) {
@@ -4704,22 +5078,26 @@ function drawWire(ctx, x1, y1, x2, y2, color, flowing, t) {
       ctx.shadowBlur = 0;
     }
   }
-}
+
+  ctx.restore();}
 
 // ── BLINK sim ──
 function drawBlink(t) {
+  if(isNaN(t) || t < 0) t = 0; // FIX: guard NaN t
   const sp = getSpeed();
   const period = Math.max(18, 160 / sp);
   const on = Math.floor(t / period) % 2 === 0;
   simState.blink.ledOn = on;
 
   const ctx = simCtx, W = simCanvas.width, H = simCanvas.height;
+  if(!ctx) return;
+  ctx.save();
+  ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   ctx.clearRect(0,0,W,H);
 
   // Dark PCB-style background with grid
   ctx.fillStyle = '#060b12'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle = 'rgba(0,212,255,.04)'; ctx.lineWidth = 1;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  if(window.getSimGrid) ctx.drawImage(window.getSimGrid(W,H),0,0);
   for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
 
   // Layout: Arduino board left, breadboard right, connected
@@ -4871,20 +5249,23 @@ function drawBlink(t) {
   ctx.fillStyle = on ? '#00ff88' : '#ff4757';
   ctx.font = 'bold 9px "Space Mono",monospace'; ctx.textAlign='right';
   ctx.fillText(on ? '● HIGH (5V)' : '○ LOW (0V)', W-12, infoY+wfH/2+3);
+  ctx.restore();
 }
 
 function drawButton(t) {
+  if(isNaN(t) || t < 0) t = 0; // FIX: guard NaN t
   const sp = getSpeed();
   const cycle = Math.max(40, 280/sp);
   const autoPress = (Math.floor(t/cycle) % 4) === 1;
   const pressed = simState.button.btnPressed || autoPress;
 
   const ctx = simCtx, W = simCanvas.width, H = simCanvas.height;
+  if(!ctx) return;
+  ctx.save();
+  ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#060b12'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(0,212,255,.04)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=20){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  if(window.getSimGrid) ctx.drawImage(window.getSimGrid(W,H),0,0);
 
   const brdX=12, brdY=H*0.15, brdW=90, brdH=70;
   drawArduinoBoard(ctx, brdX, brdY, brdW, brdH, pressed, '#00d4ff', 'UNO');
@@ -4986,21 +5367,30 @@ function drawButton(t) {
 
   ctx.fillStyle='#8892b0'; ctx.font='7px "Space Mono",monospace'; ctx.textAlign='left';
   ctx.fillText('Pin 2 state', wfX, infoY+18);
+  ctx.restore();
 }
 
 function drawAnalog(t) {
+    if(isNaN(t) || t < 0) t = 0; // FIX: guard NaN t
   const sp = getSpeed();
-  const val = (Math.sin(t * 0.012 * sp / Math.max(1,sp) + t*0.004) + 1) / 2;
-  simState.analog.potVal = val;
+  // Only auto-animate if user hasn't dragged the pot
+  if(!_potDragging){
+    const autoVal = (Math.sin(t * 0.012) + 1) / 2;
+    // Blend slowly toward auto if no interaction for a while
+    simState.analog.potVal = simState.analog.potVal * 0.995 + autoVal * 0.005;
+  }
+  const val = simState.analog.potVal;
   const brightness = Math.round(val * 255);
   const rawVal = Math.round(val * 1023);
   const voltage = (val * 5).toFixed(2);
 
   const ctx = simCtx, W = simCanvas.width, H = simCanvas.height;
+  if(!ctx) return;
+  ctx.save();
+  ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#060b12'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(0,212,255,.04)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  if(window.getSimGrid) ctx.drawImage(window.getSimGrid(W,H),0,0);
 
   const brdX=10, brdY=H*0.12, brdW=85, brdH=66;
   const ledBright = brightness > 5;
@@ -5117,11 +5507,15 @@ function drawAnalog(t) {
   // Cursor
   ctx.strokeStyle='rgba(255,215,0,.6)'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(awfX+awfW-1,awfY); ctx.lineTo(awfX+awfW-1,awfY+awfH); ctx.stroke();
+  ctx.restore();
 }
 
 function drawSerial(t) {
   const sp = getSpeed();
   const ctx = simCtx, W = simCanvas.width, H = simCanvas.height;
+  if(!ctx) return;
+  ctx.save();
+  ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#060b12'; ctx.fillRect(0,0,W,H);
 
@@ -5178,13 +5572,14 @@ function drawSerial(t) {
     {t:'loop count:  ', v:'1024',   c:'#00ff88'},
   ];
   const lineH=12, maxLines=Math.floor(termH/lineH);
-  const tIdx = Math.floor(t*0.03) % lines.length;
+  const tIdx = isNaN(t) ? 0 : Math.floor(t*0.03) % lines.length; // FIX: guard NaN
 
   for(let i=0;i<Math.min(lines.length,maxLines-1);i++){
     const line = lines[(tIdx+i)%lines.length];
+    if(!line) continue; // FIX: null guard
     const ly2 = termY+4+i*lineH;
     // Timestamp
-    const ts = ((t*16+i*1000)%100000/1000).toFixed(1);
+    const ts = isNaN(t) ? '0.0' : ((t*16+i*1000)%100000/1000).toFixed(1); // FIX: guard NaN
     ctx.fillStyle='#2a4060'; ctx.font='7px "Space Mono",monospace'; ctx.textAlign='left';
     ctx.fillText(`[${ts}s]`, monX+4, ly2);
     ctx.fillStyle='#8892b0';
@@ -5254,9 +5649,11 @@ function drawSerial(t) {
     ctx.fillStyle='rgba(136,146,176,.5)'; ctx.font='6px "Space Mono",monospace'; ctx.textAlign='center';
     ctx.fillText(lbl,lx,infoY+38);
   });
+  ctx.restore();
 }
 
 function drawServo(t) {
+    if(isNaN(t) || t < 0) t = 0; // FIX: guard NaN t
   const sp = getSpeed();
   const speed = sp * 0.006;
   simState.servo.angle += simState.servo.direction * speed;
@@ -5266,10 +5663,12 @@ function drawServo(t) {
   const pwmUs = Math.round(1000 + (simState.servo.angle/Math.PI)*1000);
 
   const ctx = simCtx, W = simCanvas.width, H = simCanvas.height;
+  if(!ctx) return;
+  ctx.save();
+  ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#060b12'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(0,212,255,.04)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  if(window.getSimGrid) ctx.drawImage(window.getSimGrid(W,H),0,0);
 
   const brdX=10, brdY=H*0.1, brdW=85, brdH=66;
   drawArduinoBoard(ctx, brdX, brdY, brdW, brdH, false, '#a78bfa', 'UNO');
@@ -5377,9 +5776,11 @@ function drawServo(t) {
   ctx.beginPath(); ctx.arc(gaugeX,gaugeY,gaugeR,Math.PI,Math.PI+simState.servo.angle); ctx.stroke();
   ctx.fillStyle='#a78bfa'; ctx.font='bold 9px "Space Mono",monospace'; ctx.textAlign='center';
   ctx.fillText(`${deg}°`, gaugeX, gaugeY+14);
+  ctx.restore();
 }
 
 function drawPWM(t) {
+    if(isNaN(t) || t < 0) t = 0; // FIX: guard NaN t
   const sp = getSpeed();
   simState.pwm.angle += 0.015 * sp;
   if(simState.pwm.angle > Math.PI*2) simState.pwm.angle -= Math.PI*2;
@@ -5389,10 +5790,12 @@ function drawPWM(t) {
   const freq = 490; // Arduino PWM freq
 
   const ctx = simCtx, W = simCanvas.width, H = simCanvas.height;
+  if(!ctx) return;
+  ctx.save();
+  ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle='#060b12'; ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(0,212,255,.04)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  if(window.getSimGrid) ctx.drawImage(window.getSimGrid(W,H),0,0);
 
   const brdX=10, brdY=H*0.1, brdW=85, brdH=66;
   const lhex='#' + bVal.toString(16).padStart(2,'0') + Math.round(bVal*0.8).toString(16).padStart(2,'0') + '00';
@@ -5473,16 +5876,18 @@ function drawPWM(t) {
   ctx.fillText(`${dutyCycle}%`, W-12, infoY+28);
   ctx.fillStyle='#8892b0'; ctx.font='7px "Space Mono",monospace'; ctx.textAlign='left';
   ctx.fillText(`avg ≈ ${(brightness*5).toFixed(2)}V  freq: ${freq}Hz`, barX, infoY+40);
+  ctx.restore();
 }
 
 
 function drawIdleState(idx) {
-  if(!simCtx) return;
+  if(!simCtx || !simCanvas) return;
+  if(idx === undefined || idx === null || idx < 0 || idx >= snippets.length) idx = 0; // FIX: guard bad idx
   const W=simCanvas.width, H=simCanvas.height;
   simCtx.clearRect(0,0,W,H);
   simCtx.fillStyle='#070b14'; simCtx.fillRect(0,0,W,H);
   // Draw a static preview
-  const label = snippets[idx].label;
+  const label = snippets[idx] ? snippets[idx].label : 'blink';
   if(label==='blink') drawBlink(0);
   else if(label==='button') drawButton(0);
   else if(label==='analog') drawAnalog(0);
@@ -5499,11 +5904,10 @@ function drawIdleState(idx) {
 function renderCode(idx) {
   const s = snippets[idx];
   const nums = Array.from({length:s.lines},(_,i)=>i+1).join('\n');
-  document.getElementById('codeDisplay').innerHTML = `
-    <div class="line-nums">${nums}</div>
-    <div class="code-area"><code>${s.code}</code></div>
-  `;
-  document.getElementById('editorTitle').textContent = s.title || 'sketch.ino';
+  const _cd=document.getElementById('codeDisplay');
+  if(_cd) _cd.innerHTML = `<div class="line-nums">${nums}</div><div class="code-area"><code>${s.code}</code></div>`;
+  const _et=document.getElementById('editorTitle');
+  if(_et) _et.textContent = s.title || 'sketch.ino';
   drawIdleState(idx);
 }
 
@@ -5511,16 +5915,19 @@ function switchCode(idx, el) {
   stopCode();
   currentSnippet = idx;
   // Reset sim states
-  simState.blink.t=0;
-  simState.button.btnPressed=false;
-  simState.serial.lines=[];
+  // Reset ALL sim states on tab switch
+  simState.blink.ledOn=false;
+  simState.button.btnPressed=false; simState.button.ledOn=false;
+  simState.analog.potVal=0.5;
+  simState.serial.lines=[]; simState.serial.count=0;
   simState.servo.angle=0; simState.servo.direction=1;
   simState.pwm.angle=0; simState.pwm.history=[];
-  simAnimFrame=0;
+  simTime=0; simAnimFrame=0; _simLastTs=0; // FIX: also reset time
   document.querySelectorAll('.editor-tab-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   renderCode(idx);
-  document.getElementById('outputBox').classList.remove('visible');
+  const ob=document.getElementById('outputBox');
+  if(ob) ob.classList.remove('visible');
 }
 
 function runCode() {
@@ -5529,27 +5936,30 @@ function runCode() {
     simRunning = false;
     if(simAnimId) cancelAnimationFrame(simAnimId);
     if(simOutputTid) clearTimeout(simOutputTid);
-    document.getElementById('runSimBtn').textContent='▶ Resume';
+    const _rsb=document.getElementById('runSimBtn'); if(_rsb) _rsb.textContent='▶ Resume';
     return;
   }
   stopCode();
   simRunning = true;
   simAnimFrame = 0;
+  simTime = 0;
+  _simLastTs = 0;
   // Reset state
   const label = snippets[currentSnippet].label;
   if(label==='serial') simState.serial.lines=[];
   if(label==='servo') { simState.servo.angle=0; simState.servo.direction=1; }
   if(label==='pwm') { simState.pwm.angle=0; simState.pwm.history=[]; }
-  document.getElementById('runSimBtn').textContent='⏸ Pause';
-  simLoop();
+  const rsb2=document.getElementById('runSimBtn'); if(rsb2) rsb2.textContent='⏸ Pause';
+  simAnimId = requestAnimationFrame(simLoop); // FIX: use rAF, NOT simLoop() — direct call has no timestamp → NaN cascade
   // Text output
   const output = document.getElementById('outputBox');
-  output.classList.add('visible');
-  const lines = snippets[currentSnippet].sim;
-  output.textContent = '';
+  if(output) output.classList.add('visible');
+  const simSnippet = snippets[currentSnippet];
+  const lines = simSnippet && simSnippet.sim ? simSnippet.sim : []; // FIX: null guard
+  if(output) output.textContent = '';
   let i=0;
   function showLine() {
-    if(i<lines.length && simRunning){
+    if(i<lines.length && simRunning && output){
       output.textContent += lines[i]+'\n';
       i++;
       simOutputTid = setTimeout(showLine, 350);
@@ -5559,26 +5969,65 @@ function runCode() {
 }
 
 
-function simLoop() {
-  if(!simRunning) return;
-  const label = snippets[currentSnippet].label;
+// ── Off-screen grid cache (drawn once, reused every frame) ──
+let _gridCanvas = null;
+let _gridW = 0, _gridH = 0;
+
+function getGridCanvas(W, H) {
+  if (!_gridCanvas || _gridW !== W || _gridH !== H) {
+    _gridCanvas = document.createElement('canvas');
+    _gridCanvas.width = W; _gridCanvas.height = H;
+    _gridW = W; _gridH = H;
+    const gc = _gridCanvas.getContext('2d');
+    gc.strokeStyle = 'rgba(0,212,255,.03)';
+    gc.lineWidth = 1;
+    for (let gx = 0; gx < W; gx += 20) {
+      gc.beginPath(); gc.moveTo(gx,0); gc.lineTo(gx,H); gc.stroke();
+    }
+    for (let gy = 0; gy < H; gy += 20) {
+      gc.beginPath(); gc.moveTo(0,gy); gc.lineTo(W,gy); gc.stroke();
+    }
+  }
+  return _gridCanvas;
+}
+window.getSimGrid = getGridCanvas;
+
+// ── Performance sim loop: capped at 40fps, delta-time physics ──
+const SIM_FPS_INTERVAL = 1000 / 40; // 40fps cap
+
+function simLoop(ts) {
+  if (!simRunning) return;
+  if (!ts || isNaN(ts)) { simAnimId = requestAnimationFrame(simLoop); return; } // FIX: guard missing/NaN ts
+  const elapsed = ts - _simLastTs;
+  if (elapsed < SIM_FPS_INTERVAL) {
+    simAnimId = requestAnimationFrame(simLoop);
+    return;
+  }
+  _simLastTs = ts;
+  const sp = typeof getSpeed === 'function' ? getSpeed() : 1;
+  simTime += Math.min(elapsed * 0.055 * sp, 6);
+  const t = simTime;
+
   simAnimFrame++;
-  const t = simAnimFrame;
-  if     (label === 'blink')  drawBlink(t);
-  else if(label === 'button') drawButton(t);
-  else if(label === 'analog') drawAnalog(t);
-  else if(label === 'serial') drawSerial(t);
-  else if(label === 'servo')  drawServo(t);
-  else if(label === 'pwm')    drawPWM(t);
+  const label = snippets[currentSnippet].label;
+  if      (label === 'blink')  drawBlink(t);
+  else if (label === 'button') drawButton(t);
+  else if (label === 'analog') drawAnalog(t);
+  else if (label === 'serial') drawSerial(t);
+  else if (label === 'servo')  drawServo(t);
+  else if (label === 'pwm')    drawPWM(t);
   simAnimId = requestAnimationFrame(simLoop);
 }
 
 
+
 function stopCode() {
   simRunning = false;
-  if(simAnimId) cancelAnimationFrame(simAnimId);
-  if(simOutputTid) clearTimeout(simOutputTid);
-  document.getElementById('runSimBtn').textContent='▶ Run';
+  if(simAnimId) { cancelAnimationFrame(simAnimId); simAnimId = null; }
+  if(simOutputTid) { clearTimeout(simOutputTid); simOutputTid = null; }
+  simTime = 0; simAnimFrame = 0; _simLastTs = 0; // FIX: reset time state on stop
+  const rsb = document.getElementById('runSimBtn');
+  if(rsb) rsb.textContent='▶ Run';
   drawIdleState(currentSnippet);
 }
 
@@ -5611,6 +6060,24 @@ simCanvas.addEventListener('click',function(e){
     setTimeout(()=>simState.button.btnPressed=false,800);
   }
 });
+
+// Analog potentiometer drag interaction
+let _potDragging = false;
+simCanvas.addEventListener('mousedown', e=>{
+  if(snippets[currentSnippet].label==='analog' && simRunning){
+    _potDragging=true;
+    const r=simCanvas.getBoundingClientRect();
+    simState.analog.potVal=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+  }
+});
+simCanvas.addEventListener('mousemove', e=>{
+  if(_potDragging && snippets[currentSnippet].label==='analog'){
+    const r=simCanvas.getBoundingClientRect();
+    simState.analog.potVal=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+  }
+});
+simCanvas.addEventListener('mouseup', ()=>{ _potDragging=false; });
+simCanvas.addEventListener('mouseleave', ()=>{ _potDragging=false; });
 
 renderCode(0);
 
@@ -5771,14 +6238,15 @@ let qIndex=0, score=0;
 
 function renderQuestion() {
   const q = questions[qIndex];
-  document.getElementById('qNum').textContent = `Question ${qIndex+1} / ${questions.length}`;
-  document.getElementById('qProgressLabel').textContent = `${Math.round(qIndex/questions.length*100)}% complete`;
-  document.getElementById('qProgressFill').style.width = (qIndex/questions.length*100)+'%';
-  document.getElementById('qScore').textContent = score;
-  document.getElementById('quizQuestion').textContent = q.q;
-  document.getElementById('quizFeedback').className = 'quiz-feedback';
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('quizNextBtn').className = 'quiz-next';
+  function setEl(id,prop,val){const el=document.getElementById(id);if(el)el[prop]=val;}
+  setEl('qNum','textContent',`Question ${qIndex+1} / ${questions.length}`);
+  setEl('qProgressLabel','textContent',`${Math.round(qIndex/questions.length*100)}% complete`);
+  const fill=document.getElementById('qProgressFill'); if(fill) fill.style.width=(qIndex/questions.length*100)+'%';
+  setEl('qScore','textContent',score);
+  setEl('quizQuestion','textContent',q.q);
+  setEl('quizFeedback','className','quiz-feedback');
+  setEl('quizFeedback','textContent','');
+  setEl('quizNextBtn','className','quiz-next');
 
   const letters = ['A','B','C','D'];
   const optsEl = document.getElementById('quizOptions');
@@ -5829,11 +6297,11 @@ function nextQuestion() {
 }
 
 function showResults() {
-  document.getElementById('quizMain').style.display='none';
+  const qm=document.getElementById('quizMain'); if(qm) qm.style.display='none';
   const comp = document.getElementById('quizComplete');
-  comp.classList.add('show');
+  if(comp) comp.classList.add('show');
   const pct = Math.round(score/questions.length*100);
-  document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+  const fs=document.getElementById('finalScore'); if(fs) fs.textContent=`${score} / ${questions.length}`;
   let msg;
   if(pct>=90) msg = "🏆 Outstanding! You're basically an Arduino engineer!";
   else if(pct>=70) msg = "🎉 Great job! You've got a solid foundation. Keep building!";
@@ -5844,8 +6312,8 @@ function showResults() {
 
 function restartQuiz() {
   qIndex=0; score=0;
-  document.getElementById('quizMain').style.display='block';
-  document.getElementById('quizComplete').classList.remove('show');
+  const qm=document.getElementById('quizMain'); if(qm) qm.style.display='block';
+  const qc=document.getElementById('quizComplete'); if(qc) qc.classList.remove('show');
   renderQuestion();
 }
 
@@ -5977,6 +6445,8 @@ renderQuestion();
     ];
 
     function draw(){
+      if(!ctx) return;
+      ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
       ctx.clearRect(0,0,W,H);
 
       // ── Board PCB background ───────────────────────────────────────────
@@ -6005,6 +6475,7 @@ renderQuestion();
       const pinLabels0 = ['0\nRX','1\nTX','2','3~','4','5~','6~','7'];
       const pinLabels1 = ['8','9~','10~','11~','12','13','GND','AREF'];
       function drawPinGroup(labels, startX, y, pinW, pinH, gap){
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
         labels.forEach((lbl,i)=>{
           const px = startX + i*(pinW+gap);
           // Black housing
@@ -6016,7 +6487,8 @@ renderQuestion();
           const short = lbl.split('\n')[0];
           ctx.fillText(short, px+pinW/2, y+pinH+10);
         });
-      }
+  ctx.restore();
+}
       drawPinGroup(pinLabels0, 58, 0, 10, 16, 7);   // pins 0-7
       drawPinGroup(pinLabels1, 212, 0, 10, 16, 7);   // pins 8-13,GND,AREF
 
@@ -6239,12 +6711,18 @@ renderQuestion();
           ctx.fillText(lbl, bx+6, by+13);
         }
       });
+      ctx.restore();
     }
 
-    // ── Animation loop (for L13 LED blink) ────────────────────────────
-    let animId;
-    function animate(){ draw(); animId = requestAnimationFrame(animate); }
-    animate();
+    // ── Animation loop (for L13 LED blink) — pauses off-screen ──────────
+    let animId = null;
+    let _anatVisible = false;
+    function animate(){ if(!_anatVisible){animId=null;return;} draw(); animId = requestAnimationFrame(animate); }
+    const _anatObs = new IntersectionObserver(entries=>{
+      _anatVisible = entries[0].isIntersecting;
+      if(_anatVisible && !animId) animId = requestAnimationFrame(animate);
+    },{threshold:0.05});
+    _anatObs.observe(canvas);
 
     function getHitPart(mx, my){
       const rect = canvas.getBoundingClientRect();
@@ -6489,9 +6967,16 @@ renderQuestion();
       });
     }
 
-    let animFrame;
-    function animate(){ draw(); animFrame=requestAnimationFrame(animate); }
-    animate();
+    let animFrame = null, _ideVisible = false;
+    function animate(){
+      if(!_ideVisible){animFrame=null;return;}
+      draw(); animFrame=requestAnimationFrame(animate);
+    }
+    const _ideObs=new IntersectionObserver(entries=>{
+      _ideVisible=entries[0].isIntersecting;
+      if(_ideVisible&&!animFrame) animFrame=requestAnimationFrame(animate);
+    },{threshold:0.05});
+    _ideObs.observe(canvas);
 
     function getHit(mx,my){
       const rect=canvas.getBoundingClientRect();
@@ -6613,6 +7098,8 @@ renderQuestion();
   let pos = 0;
 
   function draw() {
+    if(!ctx) return;
+    ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle = '#070b14';
     ctx.fillRect(0,0,W,H);
@@ -6684,9 +7171,12 @@ renderQuestion();
     ctx.font = 'bold 9px \"Space Mono\",monospace';
     ctx.textAlign = 'right';
     ctx.fillText(`${baudRate} baud`, W-6, H-6);
-  }
+  
+    ctx.restore();}
 
+  let _serialVisible = false;
   function tick() {
+    if(!_serialVisible){ animFrame=null; return; }
     if(transmitting) {
       timer++;
       if(timer >= SPEED) {
@@ -6699,8 +7189,11 @@ renderQuestion();
     draw();
     animFrame = requestAnimationFrame(tick);
   }
-
-  tick();
+  const _serialObs = new IntersectionObserver(entries=>{
+    _serialVisible = entries[0].isIntersecting;
+    if(_serialVisible && !animFrame) animFrame = requestAnimationFrame(tick);
+  },{threshold:0.05});
+  if(canvas) _serialObs.observe(canvas);
 
   // Controls
   const startBtn = document.getElementById('serialSimStart');
@@ -6855,7 +7348,12 @@ renderQuestion();
     animId = requestAnimationFrame(animate);
   }
 
-  animate();
+  let _intVisible = false;
+  const _intObs = new IntersectionObserver(entries=>{
+    _intVisible = entries[0].isIntersecting;
+    if(_intVisible && !animId) animId = requestAnimationFrame(animate);
+  },{threshold:0.05});
+  if(canvas) _intObs.observe(canvas);
 
   // Manual trigger button
   const trigBtn = document.getElementById('triggerInterrupt');
@@ -6895,6 +7393,8 @@ renderQuestion();
   const EEPROM_TOTAL= 1024;
 
   function draw() {
+    if(!ctx) return;
+    ctx.save(); ctx.shadowBlur=0;
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle = '#070b14';
     ctx.fillRect(0,0,W,H);
@@ -6947,6 +7447,8 @@ renderQuestion();
         ctx.fillText('⚠ LOW!', barW+12, y+44);
       }
     });
+  
+    ctx.restore();
   }
 
   draw();
@@ -6976,6 +7478,8 @@ renderQuestion();
   let animT = 0;
 
   function draw() {
+    if(!ctx) return;
+    ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle = '#070b14';
     ctx.fillRect(0,0,W,H);
@@ -7042,6 +7546,8 @@ renderQuestion();
     ctx.fillText('HIGH 5V', 4, midY - amp - 2);
     ctx.fillStyle = 'rgba(255,107,53,.6)';
     ctx.fillText('LOW 0V', 4, midY + amp + 12);
+  
+    ctx.restore();
   }
 
   draw();
@@ -7065,163 +7571,504 @@ renderQuestion();
 (function(){
 
 const boards = [
-  // ─── CLASSIC ───
-  { id:'uno-r3', name:'Arduino Uno R3', cat:'classic', year:2010, color:'#00d4ff',
-    mcu:'ATmega328P', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
-    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-B (via CH340)',
-    special:'The world\'s most popular Arduino. Every tutorial starts here.',
-    usecase:'Learning, prototyping, shields ecosystem',
-    price:'~$27', tags:['Beginner','5V','AVR','Shield-compatible'],
-    pinout:'Standard', w:68.6, h:53.4 },
+  // ══════════════ HISTORICAL / EARLY ══════════════
+  { id:'arduino-usb', name:'Arduino USB v2.0', cat:'historic', year:2004, color:'#6b7280',
+    mcu:'ATmega8', speed:'16 MHz', flash:'8 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'5V', digital:14, analog:6, pwm:3, serial:'1', usb:'USB-A (FTDI)',
+    special:'One of the very first Arduino boards, created at IDII Ivrea. Established the form factor still used today.',
+    usecase:'Historical — collector item. The board that started it all.', price:'Discontinued',
+    tags:['Historic','First Arduino','ATmega8'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'arduino-extreme', name:'Arduino Extreme', cat:'historic', year:2005, color:'#6b7280',
+    mcu:'ATmega8', speed:'16 MHz', flash:'8 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'5V', digital:14, analog:6, pwm:3, serial:'1', usb:'USB-B (FTDI)',
+    special:'Second generation board. Improved USB connectivity and more stable power supply than the original.',
+    usecase:'Historical. Replaced by Diecimila.', price:'Discontinued',
+    tags:['Historic','ATmega8'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'arduino-ng', name:'Arduino NG (Nuova Generazione)', cat:'historic', year:2005, color:'#6b7280',
+    mcu:'ATmega8 (later ATmega168)', speed:'16 MHz', flash:'8 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'5V', digital:14, analog:6, pwm:3, serial:'1', usb:'USB-B (FTDI)',
+    special:'"New Generation" — introduced auto-reset via DTR line. Some shipped with ATmega168 (16KB flash).',
+    usecase:'Historical.', price:'Discontinued',
+    tags:['Historic','Auto-reset','FTDI'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'diecimila', name:'Arduino Diecimila', cat:'historic', year:2007, color:'#6b7280',
+    mcu:'ATmega168', speed:'16 MHz', flash:'16 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-B (FTDI)',
+    special:'"Ten Thousand" in Italian — celebrated 10,000 units sold. First board with USB power selection jumper.',
+    usecase:'Historical.', price:'Discontinued',
+    tags:['Historic','ATmega168','FTDI'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'arduino-bt', name:'Arduino BT (Bluetooth)', cat:'historic', year:2007, color:'#6b7280',
+    mcu:'ATmega168', speed:'16 MHz', flash:'16 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'None (Bluetooth only)',
+    special:'First wireless Arduino. Built-in Bluetooth 2.0 module (BlueGiga WT11). Programmed wirelessly!',
+    usecase:'Historical — early wireless projects. Replaced by BLE boards.', price:'Discontinued',
+    tags:['Historic','Bluetooth','Wireless'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'lilypad', name:'LilyPad Arduino', cat:'lilypad', year:2007, color:'#ec4899',
+    mcu:'ATmega168V / ATmega328V', speed:'8 MHz', flash:'16 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'3.3V', digital:14, analog:6, pwm:6, serial:'1', usb:'None (FTDI cable)',
+    special:'Designed for wearables — sewable with conductive thread. Circular form factor, runs at 3.3V for safety near skin.',
+    usecase:'E-textiles, wearable computing, costume electronics', price:'~$22',
+    tags:['Wearable','E-textile','Sewable','3.3V'], pinout:'LilyPad', w:50, h:50 },
+
+  { id:'duemilanove', name:'Arduino Duemilanove', cat:'historic', year:2009, color:'#6b7280',
+    mcu:'ATmega168 / ATmega328P', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-B (FTDI)',
+    special:'"2009" in Italian — the transitional board. First with ATmega328P option. Auto-selects USB or DC power.',
+    usecase:'Historical. Direct predecessor to the Uno.', price:'Discontinued',
+    tags:['Historic','ATmega328P','Auto-power'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'arduino-fio', name:'Arduino Fio', cat:'historic', year:2010, color:'#6b7280',
+    mcu:'ATmega328P', speed:'8 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'3.3V', digital:14, analog:8, pwm:6, serial:'1', usb:'None (FTDI cable)',
+    special:'Designed for wireless apps — XBee socket on board, LiPo battery connector + charger, runs at 3.3V.',
+    usecase:'Historical — wireless sensor networks. Replaced by MKR boards.', price:'Discontinued',
+    tags:['Historic','XBee','LiPo','3.3V'], pinout:'Standard', w:68.6, h:53.4 },
+
+  // ══════════════ LILYPAD FAMILY ══════════════
+  { id:'lilypad-simple', name:'LilyPad Simple', cat:'lilypad', year:2009, color:'#ec4899',
+    mcu:'ATmega328P', speed:'8 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'3.3V', digital:9, analog:4, pwm:4, serial:'1', usb:'None (FTDI cable)',
+    special:'Simplified LilyPad with LiPo charger, fewer pins, bigger sew holes. Great for beginners making wearables.',
+    usecase:'E-textiles, simple wearable projects, beginners', price:'~$20',
+    tags:['Wearable','LiPo charger','Simplified'], pinout:'LilyPad', w:45, h:45 },
+
+  { id:'lilypad-usb', name:'LilyPad Arduino USB', cat:'lilypad', year:2012, color:'#ec4899',
+    mcu:'ATmega32U4', speed:'8 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
+    voltage:'3.3V', digital:14, analog:4, pwm:4, serial:'1', usb:'Micro-USB (native HID)',
+    special:'Native USB HID — works as keyboard or mouse. No FTDI cable needed. Easiest LilyPad to program.',
+    usecase:'Wearable HID devices, e-textiles, costumes', price:'~$25',
+    tags:['Wearable','Native USB','HID','Sewable'], pinout:'LilyPad', w:45, h:45 },
+
+  { id:'lilypad-328', name:'LilyPad Arduino 328', cat:'lilypad', year:2010, color:'#ec4899',
+    mcu:'ATmega328P', speed:'8 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'3.3V', digital:14, analog:6, pwm:6, serial:'1', usb:'None (FTDI cable)',
+    special:'Upgraded LilyPad with ATmega328P (more flash). The standard wearable workhorse.',
+    usecase:'E-textiles, wearable projects requiring more code space', price:'~$22',
+    tags:['Wearable','ATmega328P','E-textile'], pinout:'LilyPad', w:50, h:50 },
+
+  // ══════════════ UNO FAMILY ══════════════
+  { id:'uno-smd', name:'Arduino Uno SMD Rev3', cat:'classic', year:2012, color:'#00d4ff',
+    mcu:'ATmega328P (SMD)', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-B (CH340 or ATmega16U2)',
+    special:'Identical to Uno R3 but ATmega328P is surface-mount (can\'t swap chip). Smaller footprint, lower cost.',
+    usecase:'Production builds where chip-swap isn\'t needed', price:'~$20',
+    tags:['5V','SMD','Compact'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'uno-r3', name:'Arduino Uno R3', cat:'classic', year:2012, color:'#00d4ff',
+    mcu:'ATmega328P (DIP)', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-B (ATmega16U2)',
+    special:'The most popular microcontroller board in history. Added SDA/SCL breakout, IOREF pin, improved reset circuit.',
+    usecase:'Learning, prototyping, shields ecosystem — start here!', price:'~$27',
+    tags:['Beginner','5V','Shield-compatible','Most popular'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'uno-wifi-1', name:'Arduino Uno WiFi Rev1', cat:'classic iot', year:2017, color:'#00d4ff',
+    mcu:'ATmega328P + ESP8266', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'Micro-USB',
+    special:'First WiFi-enabled Uno. ESP8266 added as co-processor for WiFi. Awkward but pioneering.',
+    usecase:'Legacy WiFi projects. Replaced by R4 WiFi.', price:'Discontinued',
+    tags:['WiFi','ESP8266','5V'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'uno-wifi-2', name:'Arduino Uno WiFi Rev2', cat:'classic iot', year:2018, color:'#00d4ff',
+    mcu:'ATmega4809 + NINA-W102', speed:'20 MHz', flash:'48 KB', sram:'6 KB', eeprom:'256 B',
+    voltage:'5V', digital:14, analog:6, pwm:5, serial:'1', usb:'Micro-USB',
+    special:'Upgraded to ATmega4809 (more flash/RAM), proper NINA WiFi+BLE module, onboard IMU.',
+    usecase:'WiFi IoT with Uno form factor', price:'~$45',
+    tags:['WiFi','BLE','IMU','ATmega4809'], pinout:'Standard', w:68.6, h:53.4 },
 
   { id:'uno-r4-min', name:'Arduino Uno R4 Minima', cat:'classic', year:2023, color:'#00d4ff',
-    mcu:'Renesas RA4M1', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'8 KB',
+    mcu:'Renesas RA4M1 (ARM Cortex-M4)', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'8 KB',
     voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-C (native)',
-    special:'R3-compatible pinout but 3× faster CPU and 16× more RAM.',
-    usecase:'Drop-in Uno upgrade, larger sketches',
-    price:'~$20', tags:['5V','ARM','Native USB','CAN bus'],
-    pinout:'Standard', w:68.6, h:53.4 },
+    special:'32-bit ARM at Uno form factor. 8× more flash, 16× more SRAM than R3. USB-C, CAN bus, DAC.',
+    usecase:'Drop-in Uno upgrade, larger sketches', price:'~$20',
+    tags:['ARM','5V','USB-C','CAN bus','DAC'], pinout:'Standard', w:68.6, h:53.4 },
 
   { id:'uno-r4-wifi', name:'Arduino Uno R4 WiFi', cat:'classic iot', year:2023, color:'#00d4ff',
     mcu:'Renesas RA4M1 + ESP32-S3', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'8 KB',
     voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB-C (native)',
-    special:'Built-in 12×8 LED matrix and WiFi/BLE via ESP32-S3 coprocessor.',
-    usecase:'IoT projects, visual displays, WiFi with Uno form factor',
-    price:'~$35', tags:['WiFi','BLE','LED Matrix','5V'],
-    pinout:'Standard', w:68.6, h:53.4 },
+    special:'Built-in 12×8 LED matrix and WiFi/BLE via ESP32-S3 coprocessor. Unmatched for visual+IoT.',
+    usecase:'IoT, LED matrix displays, WiFi+Uno form factor', price:'~$35',
+    tags:['WiFi','BLE','12×8 LED Matrix','5V'], pinout:'Standard', w:68.6, h:53.4 },
 
-  { id:'leonardo', name:'Arduino Leonardo', cat:'classic', year:2012, color:'#00d4ff',
-    mcu:'ATmega32U4', speed:'16 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
-    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB (native HID)',
-    special:'Native USB means it can emulate a keyboard, mouse, or gamepad — no extra chip.',
-    usecase:'HID devices, USB game controllers, accessibility tools',
-    price:'~$20', tags:['Native USB','HID','Keyboard emulation'],
-    pinout:'Standard', w:68.6, h:53.4 },
+  // ══════════════ NANO FAMILY ══════════════
+  { id:'nano-168', name:'Arduino Nano 2.x', cat:'nano', year:2008, color:'#7c3aed',
+    mcu:'ATmega168', speed:'16 MHz', flash:'16 KB', sram:'1 KB', eeprom:'512 B',
+    voltage:'5V', digital:14, analog:8, pwm:6, serial:'1', usb:'Mini-USB (FTDI)',
+    special:'Very first Nano. Small DIP breadboard form. ATmega168 limited to 16KB — upgraded in v3.',
+    usecase:'Historical. Replaced by Nano 3.0.', price:'Discontinued',
+    tags:['Historic','ATmega168','Compact'], pinout:'Nano', w:45, h:18 },
 
-  { id:'zero', name:'Arduino Zero', cat:'classic', year:2015, color:'#00d4ff',
-    mcu:'ATSAMD21G18', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
-    voltage:'3.3V', digital:14, analog:6, pwm:10, serial:'2', usb:'Micro-USB',
-    special:'Built-in EDBG debugger chip — real hardware step-through debugging.',
-    usecase:'Learning debugging, 32-bit ARM projects',
-    price:'~$49', tags:['ARM Cortex-M0+','Debugger','3.3V'],
-    pinout:'Standard', w:68.6, h:53.4 },
-
-  // ─── NANO ───
-  { id:'nano', name:'Arduino Nano', cat:'nano', year:2008, color:'#7c3aed',
+  { id:'nano', name:'Arduino Nano 3.0', cat:'nano', year:2008, color:'#7c3aed',
     mcu:'ATmega328P', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
     voltage:'5V', digital:22, analog:8, pwm:6, serial:'1', usb:'Mini-USB',
-    special:'Breadboard-native form factor. All the Uno\'s power in 1/4 the space.',
-    usecase:'Compact builds, breadboard prototypes',
-    price:'~$24', tags:['Compact','Breadboard','5V','AVR'],
-    pinout:'Nano', w:45, h:18 },
+    special:'Breadboard-native DIP-30 form factor. All Uno capability in 1/4 the area.',
+    usecase:'Compact builds, breadboard prototypes', price:'~$24',
+    tags:['Compact','Breadboard','5V','AVR'], pinout:'Nano', w:45, h:18 },
 
   { id:'nano-every', name:'Arduino Nano Every', cat:'nano', year:2019, color:'#7c3aed',
     mcu:'ATmega4809', speed:'20 MHz', flash:'48 KB', sram:'6 KB', eeprom:'256 B',
     voltage:'5V', digital:22, analog:8, pwm:5, serial:'1', usb:'Micro-USB',
-    special:'50% more Flash and 3× SRAM than original Nano at a lower price.',
-    usecase:'Upgrade path from Nano, cost-sensitive projects',
-    price:'~$13', tags:['Budget','5V','More RAM'],
-    pinout:'Nano', w:45, h:18 },
+    special:'50% more flash and 3× SRAM than original Nano at lower price. Modern AVR core.',
+    usecase:'Budget Nano upgrade, cost-sensitive builds', price:'~$13',
+    tags:['Budget','5V','More RAM','ATmega4809'], pinout:'Nano', w:45, h:18 },
 
-  { id:'nano-33-iot', name:'Nano 33 IoT', cat:'nano iot', year:2019, color:'#7c3aed',
-    mcu:'SAMD21 + NINA-W10', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+  { id:'nano-33-iot', name:'Arduino Nano 33 IoT', cat:'nano iot', year:2019, color:'#7c3aed',
+    mcu:'ATSAMD21G18 + NINA-W102', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
     voltage:'3.3V', digital:22, analog:8, pwm:11, serial:'1', usb:'Micro-USB',
-    special:'WiFi 802.11 b/g/n + BLE 4.2 via u-blox NINA-W10, 6-axis IMU built-in.',
-    usecase:'IoT projects, remote sensing, wireless data logging',
-    price:'~$20', tags:['WiFi','BLE','IMU','3.3V'],
-    pinout:'Nano', w:45, h:18 },
+    special:'WiFi 802.11 b/g/n + BLE 4.2 via u-blox NINA-W102. LSM6DS3 6-axis IMU. Tiny IoT powerhouse.',
+    usecase:'IoT projects, wireless data logging, wearable sensing', price:'~$20',
+    tags:['WiFi','BLE','IMU','3.3V'], pinout:'Nano', w:45, h:18 },
 
-  { id:'nano-33-ble', name:'Nano 33 BLE Sense', cat:'nano iot', year:2019, color:'#7c3aed',
-    mcu:'nRF52840', speed:'64 MHz', flash:'1 MB', sram:'256 KB', eeprom:'None',
+  { id:'nano-33-ble', name:'Arduino Nano 33 BLE', cat:'nano iot', year:2019, color:'#7c3aed',
+    mcu:'nRF52840 (ARM Cortex-M4F)', speed:'64 MHz', flash:'1 MB', sram:'256 KB', eeprom:'None',
     voltage:'3.3V', digital:22, analog:8, pwm:14, serial:'1', usb:'Micro-USB',
-    special:'9 on-board sensors: IMU, microphone, proximity, color, temp, humidity, pressure.',
-    usecase:'TinyML, gesture control, environmental sensing',
-    price:'~$35', tags:['BLE 5.0','TinyML','9 Sensors','ARM M4'],
-    pinout:'Nano', w:45, h:18 },
+    special:'BLE 5.0 with onboard LSM9DS1 9-axis IMU. Supports Arduino and MicroPython.',
+    usecase:'BLE peripherals, gesture sensing, TinyML', price:'~$25',
+    tags:['BLE 5.0','9-axis IMU','3.3V','ARM M4'], pinout:'Nano', w:45, h:18 },
 
-  { id:'nano-rp2040', name:'Nano RP2040 Connect', cat:'nano iot', year:2021, color:'#7c3aed',
+  { id:'nano-33-ble-sense', name:'Arduino Nano 33 BLE Sense', cat:'nano iot', year:2019, color:'#7c3aed',
+    mcu:'nRF52840 (ARM Cortex-M4F)', speed:'64 MHz', flash:'1 MB', sram:'256 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:14, serial:'1', usb:'Micro-USB',
+    special:'9 onboard sensors: 9-axis IMU, microphone, proximity, RGB+gesture, temp, humidity, pressure. TinyML hub.',
+    usecase:'TinyML, gesture control, environmental sensing', price:'~$35',
+    tags:['BLE 5.0','9 Sensors','TinyML','ARM M4'], pinout:'Nano', w:45, h:18 },
+
+  { id:'nano-33-ble-sense-r2', name:'Arduino Nano 33 BLE Sense Rev2', cat:'nano iot', year:2022, color:'#7c3aed',
+    mcu:'nRF52840 (ARM Cortex-M4F)', speed:'64 MHz', flash:'1 MB', sram:'256 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:14, serial:'1', usb:'Micro-USB',
+    special:'Rev2 updates sensor suite: BMI270+BMM150 IMU, HS3003 temp/humidity, APDS9960 gesture, LPS22HB pressure.',
+    usecase:'TinyML, sensor fusion, environmental monitoring', price:'~$35',
+    tags:['BLE 5.0','Updated sensors','TinyML','ARM M4'], pinout:'Nano', w:45, h:18 },
+
+  { id:'nano-rp2040', name:'Arduino Nano RP2040 Connect', cat:'nano iot', year:2021, color:'#7c3aed',
     mcu:'Raspberry Pi RP2040', speed:'133 MHz', flash:'16 MB', sram:'264 KB', eeprom:'None',
     voltage:'3.3V', digital:22, analog:8, pwm:20, serial:'2', usb:'Micro-USB',
-    special:'RP2040 dual-core with WiFi/BLE + 6-axis IMU + microphone.',
-    usecase:'Audio processing, dual-core applications, MicroPython',
-    price:'~$26', tags:['RP2040','Dual-core','WiFi','Python'],
-    pinout:'Nano', w:45, h:18 },
+    special:'RP2040 dual-core Cortex-M0+ with WiFi/BLE via NINA-W102, PDM microphone, 6-axis IMU.',
+    usecase:'Audio processing, dual-core apps, MicroPython', price:'~$26',
+    tags:['RP2040','Dual-core','WiFi','MicroPython'], pinout:'Nano', w:45, h:18 },
 
-  // ─── MKR ───
-  { id:'mkr-wifi', name:'MKR WiFi 1010', cat:'mkr iot', year:2018, color:'#ffd700',
-    mcu:'SAMD21 + NINA-W10', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
-    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
-    special:'LiPo battery connector + charger built-in. WiFi + BLE ready to deploy.',
-    usecase:'Battery-powered IoT nodes, home automation',
-    price:'~$36', tags:['WiFi','BLE','LiPo','3.3V'],
-    pinout:'MKR', w:61.5, h:25 },
+  { id:'nano-esp32', name:'Arduino Nano ESP32', cat:'nano iot', year:2023, color:'#7c3aed',
+    mcu:'ESP32-S3 (Xtensa LX7)', speed:'240 MHz', flash:'16 MB', sram:'512 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:20, serial:'2', usb:'USB-C (native)',
+    special:'Most powerful Nano ever. ESP32-S3 at 240MHz with built-in WiFi 6 + BLE 5. Supports MicroPython and CircuitPython.',
+    usecase:'High-performance IoT, AI inference, MicroPython projects', price:'~$18',
+    tags:['ESP32-S3','WiFi 6','BLE 5','240MHz','USB-C'], pinout:'Nano', w:45, h:18 },
 
-  { id:'mkr-zero', name:'MKR Zero', cat:'mkr', year:2017, color:'#ffd700',
-    mcu:'SAMD21', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
-    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
-    special:'Built-in SD card slot and I2S for digital audio. The audio-maker\'s board.',
-    usecase:'Audio projects, data logging, music instruments',
-    price:'~$35', tags:['SD card','I2S Audio','LiPo','3.3V'],
-    pinout:'MKR', w:61.5, h:25 },
+  // ══════════════ MINI / PRO FAMILY ══════════════
+  { id:'arduino-mini', name:'Arduino Mini 05', cat:'pro', year:2008, color:'#ff6b35',
+    mcu:'ATmega328P', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'5V', digital:14, analog:8, pwm:6, serial:'1', usb:'None (FTDI cable)',
+    special:'Even smaller than Nano — no USB chip at all. Requires external FTDI adapter to program.',
+    usecase:'Ultra-compact permanent installs where Nano is too large', price:'Discontinued',
+    tags:['Ultra-compact','No USB','ATmega328P'], pinout:'Nano', w:30, h:18 },
 
-  { id:'mkr-gsm', name:'MKR GSM 1400', cat:'mkr iot', year:2018, color:'#ffd700',
-    mcu:'SAMD21 + u-blox SARA-U201', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
-    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
-    special:'Cellular 2G/3G connectivity. Works anywhere with mobile coverage — no WiFi needed.',
-    usecase:'Remote monitoring, asset tracking, industrial IoT',
-    price:'~$84', tags:['2G/3G','Cellular','Remote','LiPo'],
-    pinout:'MKR', w:61.5, h:25 },
-
-  // ─── MEGA ───
-  { id:'mega2560', name:'Arduino Mega 2560', cat:'mega', year:2010, color:'#00ff88',
-    mcu:'ATmega2560', speed:'16 MHz', flash:'256 KB', sram:'8 KB', eeprom:'4 KB',
-    voltage:'5V', digital:54, analog:16, pwm:15, serial:'4', usb:'USB-B',
-    special:'54 digital I/O pins and 4 hardware serial ports. The workhorse for complex projects.',
-    usecase:'3D printers, CNC machines, large LED matrices, robotics',
-    price:'~$45', tags:['54 pins','4× Serial','5V','High I/O'],
-    pinout:'Mega', w:101.6, h:53.4 },
-
-  { id:'due', name:'Arduino Due', cat:'mega', year:2012, color:'#00ff88',
-    mcu:'AT91SAM3X8E (ARM Cortex-M3)', speed:'84 MHz', flash:'512 KB', sram:'96 KB', eeprom:'None',
-    voltage:'3.3V', digital:54, analog:12, pwm:12, serial:'4', usb:'Micro-USB',
-    special:'First 32-bit Arduino. True DAC output (not PWM). 84MHz ARM at Mega form factor.',
-    usecase:'Audio synthesis, high-speed signal processing, complex robotics',
-    price:'~$45', tags:['84MHz ARM','3.3V','54 pins','True DAC'],
-    pinout:'Mega', w:101.6, h:53.4 },
-
-  // ─── PRO / PORTENTA ───
-  { id:'portenta-h7', name:'Portenta H7', cat:'pro', year:2020, color:'#a78bfa',
-    mcu:'STM32H747XI (Cortex-M7 + M4)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
-    voltage:'3.3V', digital:22, analog:8, pwm:12, serial:'3', usb:'USB-C',
-    special:'Dual-core 480MHz with dedicated ML accelerator, WiFi, BLE, and display interfaces.',
-    usecase:'Computer vision, edge AI, industrial control, drone flight controllers',
-    price:'~$103', tags:['480MHz','Dual-core','AI/ML','WiFi+BLE'],
-    pinout:'Portenta', w:66, h:25 },
-
-  { id:'giga-r1', name:'Arduino Giga R1 WiFi', cat:'pro', year:2023, color:'#a78bfa',
-    mcu:'STM32H747XI (Cortex-M7 + M4)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
-    voltage:'3.3V', digital:76, analog:12, pwm:12, serial:'4', usb:'USB-C',
-    special:'Mega-sized board with Portenta\'s dual-core power, WiFi/BLE, audio codec, and display port.',
-    usecase:'Advanced robotics, multi-sensor arrays, audio+display projects',
-    price:'~$66', tags:['480MHz','Dual-core','76 pins','Display'],
-    pinout:'Mega', w:101.6, h:53.4 },
-
-  { id:'micro', name:'Arduino Micro', cat:'pro', year:2012, color:'#ff6b35',
-    mcu:'ATmega32U4', speed:'16 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
-    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB (native HID)',
-    special:'Smallest official board with native USB HID. Breadboard-friendly Leonardo.',
-    usecase:'HID devices, keyboards, mice, tiny USB gadgets',
-    price:'~$25', tags:['Native USB','HID','Compact','5V'],
-    pinout:'Nano', w:48, h:18 },
+  { id:'pro-328', name:'Arduino Pro (3.3V / 5V)', cat:'pro', year:2009, color:'#ff6b35',
+    mcu:'ATmega168 / ATmega328P', speed:'8 MHz (3.3V) / 16 MHz (5V)', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'3.3V or 5V', digital:14, analog:6, pwm:6, serial:'1', usb:'None (FTDI cable)',
+    special:'SparkFun design adopted by Arduino. No power LED to save battery. Low-power 3.3V/8MHz variant.',
+    usecase:'Battery-powered installs, embedded builds', price:'~$12',
+    tags:['No USB','Low power','3.3V option','Battery'], pinout:'Standard', w:68.6, h:53.4 },
 
   { id:'pro-mini', name:'Arduino Pro Mini', cat:'pro', year:2009, color:'#ff6b35',
     mcu:'ATmega328P', speed:'8 or 16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
     voltage:'3.3V or 5V', digital:14, analog:8, pwm:6, serial:'1', usb:'None (FTDI required)',
-    special:'No USB chip, no voltage regulator on 3.3V version. Absolute bare minimum for size.',
-    usecase:'Ultra-compact permanent installs, wearables, coin-cell projects',
-    price:'~$10', tags:['Tiny','No USB','Low power','Bare-bones'],
-    pinout:'Nano', w:33, h:18 },
-];
+    special:'Absolute bare minimum. No USB chip, no DC jack. Absolute smallest official Arduino.',
+    usecase:'Coin-cell projects, wearables, ultra-compact permanent installs', price:'~$10',
+    tags:['Tiny','No USB','Low power','Bare-bones'], pinout:'Nano', w:33, h:18 },
+
+  { id:'micro', name:'Arduino Micro', cat:'pro', year:2012, color:'#ff6b35',
+    mcu:'ATmega32U4', speed:'16 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB (native HID)',
+    special:'Smallest official Arduino with native USB HID. Breadboard-friendly Leonardo form factor.',
+    usecase:'HID devices, keyboards, mice, tiny USB gadgets', price:'~$25',
+    tags:['Native USB','HID','Compact','5V'], pinout:'Nano', w:48, h:18 },
+
+  // ══════════════ LEONARDO / ETHERNET FAMILY ══════════════
+  { id:'leonardo', name:'Arduino Leonardo', cat:'classic', year:2012, color:'#00d4ff',
+    mcu:'ATmega32U4', speed:'16 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB (native HID)',
+    special:'First standard-sized Arduino with native USB. Can emulate keyboard, mouse, joystick — no extra chip.',
+    usecase:'HID devices, USB game controllers, accessibility tools', price:'~$20',
+    tags:['Native USB','HID','Keyboard emulation','5V'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'leonardo-eth', name:'Arduino Leonardo ETH', cat:'classic', year:2013, color:'#00d4ff',
+    mcu:'ATmega32U4 + W5500', speed:'16 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB (native HID)',
+    special:'Leonardo with onboard W5500 Ethernet chip and SD card slot. Native USB HID + wired networking.',
+    usecase:'HID + network projects, web-controlled HID devices', price:'Discontinued',
+    tags:['Native USB','HID','Ethernet','SD card'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'arduino-ethernet', name:'Arduino Ethernet Rev3', cat:'classic', year:2011, color:'#00d4ff',
+    mcu:'ATmega328P + W5100', speed:'16 MHz', flash:'32 KB', sram:'2 KB', eeprom:'1 KB',
+    voltage:'5V', digital:14, analog:6, pwm:6, serial:'1', usb:'USB (programming only)',
+    special:'Uno R3 with built-in W5100 Ethernet controller and SD card. The original wired Arduino server.',
+    usecase:'Wired IoT, web servers, network data logging', price:'Discontinued',
+    tags:['Ethernet','SD card','Wired networking'], pinout:'Standard', w:68.6, h:53.4 },
+
+  // ══════════════ ESPLORA ══════════════
+  { id:'esplora', name:'Arduino Esplora', cat:'classic', year:2012, color:'#0ea5e9',
+    mcu:'ATmega32U4', speed:'16 MHz', flash:'32 KB', sram:'2.5 KB', eeprom:'1 KB',
+    voltage:'5V', digital:'via onboard sensors', analog:'via onboard sensors', pwm:3, serial:'1', usb:'Micro-USB (native HID)',
+    special:'Game-controller form factor. Built-in: joystick, buttons, slider, mic, temp sensor, light sensor, buzzer, RGB LED.',
+    usecase:'Gaming, HID controllers, interactive art — no breadboard needed', price:'Discontinued',
+    tags:['Game controller','Built-in sensors','HID','All-in-one'], pinout:'Esplora', w:164, h:60 },
+
+  // ══════════════ MEGA FAMILY ══════════════
+  { id:'mega-168', name:'Arduino Mega (Original)', cat:'mega', year:2009, color:'#00ff88',
+    mcu:'ATmega1280', speed:'16 MHz', flash:'128 KB', sram:'8 KB', eeprom:'4 KB',
+    voltage:'5V', digital:54, analog:16, pwm:14, serial:'4', usb:'USB-B (FTDI)',
+    special:'First Mega. 54 digital pins, 16 analog, 4 hardware serial. Established the extended Mega form factor.',
+    usecase:'Historical. Replaced by Mega 2560.', price:'Discontinued',
+    tags:['Historic','54 pins','ATmega1280'], pinout:'Mega', w:101.6, h:53.4 },
+
+  { id:'mega2560', name:'Arduino Mega 2560 Rev3', cat:'mega', year:2010, color:'#00ff88',
+    mcu:'ATmega2560', speed:'16 MHz', flash:'256 KB', sram:'8 KB', eeprom:'4 KB',
+    voltage:'5V', digital:54, analog:16, pwm:15, serial:'4', usb:'USB-B (ATmega16U2)',
+    special:'The workhorse. 54 digital I/O, 16 analog, 4 hardware serial, 256KB flash. Powers 3D printers worldwide.',
+    usecase:'3D printers (RAMPS), CNC, large LED arrays, robotics', price:'~$45',
+    tags:['54 pins','4× Serial','5V','3D printers'], pinout:'Mega', w:101.6, h:53.4 },
+
+  { id:'mega-adk', name:'Arduino Mega ADK', cat:'mega', year:2011, color:'#00ff88',
+    mcu:'ATmega2560 + MAX3421E', speed:'16 MHz', flash:'256 KB', sram:'8 KB', eeprom:'4 KB',
+    voltage:'5V', digital:54, analog:16, pwm:15, serial:'4', usb:'USB-A host + USB-B',
+    special:'Android ADK (Accessory Development Kit). Built-in USB host controller to connect Android phones.',
+    usecase:'Historical — Android accessory projects. Superseded by smartphones getting BT.', price:'Discontinued',
+    tags:['Android ADK','USB host','54 pins'], pinout:'Mega', w:101.6, h:53.4 },
+
+  { id:'due', name:'Arduino Due', cat:'mega', year:2012, color:'#00ff88',
+    mcu:'AT91SAM3X8E (ARM Cortex-M3)', speed:'84 MHz', flash:'512 KB', sram:'96 KB', eeprom:'None',
+    voltage:'3.3V', digital:54, analog:12, pwm:12, serial:'4', usb:'Micro-USB (native)',
+    special:'First 32-bit Arduino. 84MHz ARM, true 12-bit DAC output (not PWM), 96KB SRAM.',
+    usecase:'Audio synthesis, high-speed signal processing, robotics', price:'~$45',
+    tags:['84MHz ARM','3.3V','True DAC','54 pins'], pinout:'Mega', w:101.6, h:53.4 },
+
+  // ══════════════ ZERO / M0 FAMILY ══════════════
+  { id:'zero', name:'Arduino Zero', cat:'classic', year:2015, color:'#00d4ff',
+    mcu:'ATSAMD21G18 (ARM Cortex-M0+)', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:14, analog:6, pwm:10, serial:'2', usb:'Micro-USB (native)',
+    special:'Built-in EDBG debugger chip for real hardware step-through debugging in IDE 2.x.',
+    usecase:'Learning debugging, 32-bit ARM projects', price:'~$49',
+    tags:['ARM Cortex-M0+','Hardware debugger','3.3V'], pinout:'Standard', w:68.6, h:53.4 },
+
+  // ══════════════ YÚN (LINUX) FAMILY ══════════════
+  { id:'yun', name:'Arduino Yún', cat:'iot', year:2013, color:'#06b6d4',
+    mcu:'ATmega32U4 + Atheros AR9331', speed:'16 MHz + 400 MHz', flash:'32 KB + 16 MB', sram:'2.5 KB + 64 MB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB',
+    special:'Dual processor: ATmega for real-time + Atheros running OpenWRT Linux + WiFi. Bridge library connects them.',
+    usecase:'Linux+Arduino hybrid, web servers, REST APIs from Arduino', price:'Discontinued',
+    tags:['Linux','WiFi','Dual-processor','OpenWRT'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'yun-mini', name:'Arduino Yún Mini', cat:'iot', year:2015, color:'#06b6d4',
+    mcu:'ATmega32U4 + Atheros AR9331', speed:'16 MHz + 400 MHz', flash:'32 KB + 16 MB', sram:'2.5 KB + 64 MB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB',
+    special:'Shrunken Yún form factor for tighter spaces. Same dual-processor Linux+AVR system.',
+    usecase:'Compact Linux+Arduino projects', price:'Discontinued',
+    tags:['Linux','WiFi','Compact','OpenWRT'], pinout:'Nano', w:58, h:25 },
+
+  { id:'yun-r2', name:'Arduino Yún Rev2', cat:'iot', year:2018, color:'#06b6d4',
+    mcu:'ATmega32U4 + Atheros AR9331', speed:'16 MHz + 400 MHz', flash:'32 KB + 16 MB', sram:'2.5 KB + 64 MB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB',
+    special:'Updated Yún with LiPo charger circuit, improved power management, same Linux+Arduino combo.',
+    usecase:'Battery-powered Linux+Arduino projects', price:'Discontinued',
+    tags:['Linux','WiFi','LiPo charger'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'tian', name:'Arduino Tian', cat:'iot', year:2016, color:'#06b6d4',
+    mcu:'ATSAMD21G18 + Atheros AR9342', speed:'48 MHz + 560 MHz', flash:'256 KB + 4 GB eMMC', sram:'32 KB + 256 MB', eeprom:'None',
+    voltage:'3.3V', digital:14, analog:6, pwm:10, serial:'2', usb:'Micro-USB',
+    special:'ARM M0+ + powerful Atheros 560MHz Linux + built-in WiFi + BT 4.0 + eMMC storage. Most capable Yún-like board.',
+    usecase:'Edge computing, audio/video processing, complex IoT gateway', price:'Discontinued',
+    tags:['Linux','WiFi','BT','560MHz','eMMC'], pinout:'Standard', w:68.6, h:53.4 },
+
+  { id:'industrial-101', name:'Arduino Industrial 101', cat:'iot', year:2015, color:'#06b6d4',
+    mcu:'ATmega32U4 + AR9331', speed:'16 MHz + 400 MHz', flash:'32 KB + 16 MB', sram:'2.5 KB + 64 MB', eeprom:'1 KB',
+    voltage:'5V', digital:20, analog:12, pwm:7, serial:'1', usb:'Micro-USB',
+    special:'Yún on a tiny board for embedding in products. WiFi, Linux, AVR all in 36×26mm.',
+    usecase:'Product embedding, industrial Linux+AVR gateway modules', price:'Discontinued',
+    tags:['Linux','WiFi','Embeddable','Industrial'], pinout:'Nano', w:36, h:26 },
+
+  // ══════════════ MKR FAMILY ══════════════
+  { id:'mkr-1000', name:'Arduino MKR1000 WiFi', cat:'mkr iot', year:2016, color:'#ffd700',
+    mcu:'ATSAMW25 (SAMD21 + WINC1500)', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'First MKR board. Integrated ATSAMW25 with WINC1500 WiFi. LiPo connector + charger. The MKR format origin.',
+    usecase:'WiFi IoT projects, battery-powered connectivity', price:'~$33',
+    tags:['WiFi','LiPo','3.3V','First MKR'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-zero', name:'Arduino MKR Zero', cat:'mkr', year:2017, color:'#ffd700',
+    mcu:'ATSAMD21G18', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'Built-in micro SD slot and I2S for digital audio. The audio-maker\'s MKR board. LiPo charger.',
+    usecase:'Audio projects, data logging, music instruments', price:'~$35',
+    tags:['SD card','I2S Audio','LiPo','3.3V'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-fox', name:'Arduino MKR FOX 1200', cat:'mkr iot', year:2017, color:'#ffd700',
+    mcu:'ATSAMD21G18 + ATA8520', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'Sigfox LPWAN (Low Power Wide Area Network). 50km range, extremely low power. Includes 1 year Sigfox subscription.',
+    usecase:'Long-range remote sensing, asset tracking, countryside IoT', price:'~$42',
+    tags:['Sigfox','LPWAN','50km range','LiPo'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-wan-1300', name:'Arduino MKR WAN 1300 (LoRa)', cat:'mkr iot', year:2017, color:'#ffd700',
+    mcu:'ATSAMD21G18 + Murata CMWX1ZZABZ', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'LoRaWAN connectivity for long-range low-power networking. Works with The Things Network.',
+    usecase:'LoRaWAN sensors, smart city, agriculture monitoring', price:'~$40',
+    tags:['LoRa','LoRaWAN','LPWAN','LiPo'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-wan-1310', name:'Arduino MKR WAN 1310', cat:'mkr iot', year:2020, color:'#ffd700',
+    mcu:'ATSAMD21G18 + Murata CMWX1ZZABZ-091', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'Updated WAN 1300: longer battery life, improved LoRa antenna connector, SMA external antenna option.',
+    usecase:'Long-range IoT networks, rural monitoring', price:'~$40',
+    tags:['LoRa 1.0.4','LPWAN','Updated','SMA antenna'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-gsm', name:'Arduino MKR GSM 1400', cat:'mkr iot', year:2018, color:'#ffd700',
+    mcu:'ATSAMD21G18 + u-blox SARA-U201', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'2G/3G cellular. Works anywhere with mobile coverage. SIM slot included. No WiFi required.',
+    usecase:'Remote monitoring, asset tracking, cellular IoT', price:'~$84',
+    tags:['2G/3G','Cellular','Remote','LiPo'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-nb', name:'Arduino MKR NB 1500', cat:'mkr iot', year:2018, color:'#ffd700',
+    mcu:'ATSAMD21G18 + u-blox SARA-R410M', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'NB-IoT and LTE-M connectivity — 4G cellular for IoT. Extremely low power consumption on cellular.',
+    usecase:'NB-IoT industrial sensors, smart meters, low-power cellular', price:'~$60',
+    tags:['NB-IoT','LTE-M','4G IoT','LiPo'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-vidor', name:'Arduino MKR Vidor 4000', cat:'mkr', year:2018, color:'#ffd700',
+    mcu:'ATSAMD21G18 + Intel Cyclone 10CL016', speed:'48 MHz + FPGA', flash:'256 KB + 16 MB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'First Arduino with an FPGA (Field Programmable Gate Array). Custom hardware logic + WiFi + BLE.',
+    usecase:'FPGA prototyping, hardware acceleration, vision processing', price:'~$60',
+    tags:['FPGA','Intel Cyclone','WiFi','BLE'], pinout:'MKR', w:61.5, h:25 },
+
+  { id:'mkr-wifi', name:'Arduino MKR WiFi 1010', cat:'mkr iot', year:2018, color:'#ffd700',
+    mcu:'ATSAMD21G18 + NINA-W102', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:7, pwm:13, serial:'1', usb:'Micro-USB',
+    special:'WiFi 802.11 b/g/n + BLE 4.2 via u-blox NINA-W102. LiPo connector + charger. Best MKR for IoT.',
+    usecase:'Battery-powered IoT nodes, home automation', price:'~$36',
+    tags:['WiFi','BLE','LiPo','3.3V'], pinout:'MKR', w:61.5, h:25 },
+
+  // ══════════════ PORTENTA FAMILY ══════════════
+  { id:'portenta-h7', name:'Arduino Portenta H7', cat:'pro', year:2020, color:'#a78bfa',
+    mcu:'STM32H747XI (Cortex-M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:12, serial:'3', usb:'USB-C (native)',
+    special:'Dual-core 480MHz with WiFi, BLE, Ethernet, video output, crypto accelerator. ML inference onboard.',
+    usecase:'Computer vision, edge AI, industrial control, drones', price:'~$103',
+    tags:['480MHz','Dual-core','AI/ML','WiFi+BLE','Ethernet'], pinout:'Portenta', w:66, h:25 },
+
+  { id:'portenta-h7-lite', name:'Arduino Portenta H7 Lite', cat:'pro', year:2021, color:'#a78bfa',
+    mcu:'STM32H747XI (Cortex-M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:12, serial:'3', usb:'USB-C (native)',
+    special:'Portenta H7 without WiFi/BLE/crypto. Lower cost for wired-only industrial applications.',
+    usecase:'Industrial control without wireless, cost-sensitive dual-core', price:'~$55',
+    tags:['480MHz','Dual-core','No wireless','Industrial'], pinout:'Portenta', w:66, h:25 },
+
+  { id:'portenta-h7-lite-connected', name:'Portenta H7 Lite Connected', cat:'pro iot', year:2021, color:'#a78bfa',
+    mcu:'STM32H747XI (Cortex-M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:12, serial:'3', usb:'USB-C',
+    special:'H7 Lite + WiFi/BLE restored. Balances H7 Full price against H7 Lite savings.',
+    usecase:'Industrial IoT with dual-core at lower cost than H7 Full', price:'~$70',
+    tags:['480MHz','Dual-core','WiFi','BLE'], pinout:'Portenta', w:66, h:25 },
+
+  { id:'portenta-x8', name:'Arduino Portenta X8', cat:'pro', year:2022, color:'#a78bfa',
+    mcu:'NXP i.MX 8M Mini (4× Cortex-A53 @1.8GHz) + STM32H747', speed:'1.8 GHz + 480 MHz', flash:'16 GB eMMC', sram:'2 GB LPDDR4', eeprom:'None',
+    voltage:'3.3V', digital:'via carrier', analog:'via carrier', pwm:8, serial:'4', usb:'USB-C',
+    special:'Full Linux OS (Yocto) on A53 cores + M7 real-time. Docker containers. Most powerful Arduino ever.',
+    usecase:'Edge computing, OTA Linux updates, industrial IoT gateway', price:'~$200',
+    tags:['Linux','1.8GHz','2GB RAM','Docker','eMMC'], pinout:'Portenta', w:66, h:25 },
+
+  { id:'portenta-c33', name:'Arduino Portenta C33', cat:'pro', year:2023, color:'#a78bfa',
+    mcu:'Renesas RA6M5 (ARM Cortex-M33)', speed:'200 MHz', flash:'2 MB', sram:'512 KB', eeprom:'None',
+    voltage:'3.3V', digital:22, analog:8, pwm:8, serial:'3', usb:'USB-C',
+    special:'Cost-effective Portenta with Renesas RA6M5, WiFi+BLE via ESP32-C3. TrustZone security.',
+    usecase:'Secure IoT, industrial applications at lower cost', price:'~$54',
+    tags:['200MHz','WiFi','BLE','TrustZone','ARM M33'], pinout:'Portenta', w:66, h:25 },
+
+  { id:'portenta-machine-ctrl', name:'Arduino Portenta Machine Control', cat:'pro', year:2021, color:'#a78bfa',
+    mcu:'STM32H747XI (via Portenta H7)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'24V industrial', digital:8, analog:3, pwm:3, serial:'2', usb:'USB-C',
+    special:'Industrial PLC carrier for Portenta H7. 24V I/O, CAN bus, RS232/RS485, 4-20mA analog, DIN rail.',
+    usecase:'Industrial automation, factory PLC replacement, CNC control', price:'~$200',
+    tags:['Industrial PLC','24V','CAN bus','RS485','DIN rail'], pinout:'Portenta', w:66, h:50 },
+
+  // ══════════════ NICLA FAMILY ══════════════
+  { id:'nicla-sense-me', name:'Arduino Nicla Sense ME', cat:'pro', year:2021, color:'#f472b6',
+    mcu:'nRF52832 (ARM Cortex-M4F) + BHI260AP', speed:'64 MHz', flash:'512 KB', sram:'64 KB', eeprom:'None',
+    voltage:'3.3V', digital:4, analog:0, pwm:2, serial:'1', usb:'None (BLE only)',
+    special:'Tiny 22.5×22.5mm sensor hub. Bosch BHI260AP AI sensor processor + BMM150 compass + BME688 gas sensor.',
+    usecase:'Asset tracking, industrial condition monitoring, predictive maintenance', price:'~$35',
+    tags:['22.5mm tiny','BLE','AI Sensor','BME688 gas'], pinout:'Nicla', w:22.5, h:22.5 },
+
+  { id:'nicla-vision', name:'Arduino Nicla Vision', cat:'pro', year:2021, color:'#f472b6',
+    mcu:'STM32H747AII6 (M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'3.3V', digital:4, analog:0, pwm:2, serial:'1', usb:'Micro-USB',
+    special:'Vision AI in 22.5×22.5mm. 2MP camera, time-of-flight depth, IMU, microphone, WiFi+BLE.',
+    usecase:'Edge vision AI, object detection, QR/barcode reading', price:'~$110',
+    tags:['2MP Camera','Vision AI','480MHz','22.5mm'], pinout:'Nicla', w:22.5, h:22.5 },
+
+  { id:'nicla-voice', name:'Arduino Nicla Voice', cat:'pro', year:2023, color:'#f472b6',
+    mcu:'Nordic nRF52832 + Syntiant NDP120', speed:'64 MHz + NDP120', flash:'512 KB', sram:'64 KB', eeprom:'None',
+    voltage:'3.3V', digital:4, analog:0, pwm:2, serial:'1', usb:'None (BLE)',
+    special:'Always-on voice recognition with Syntiant NDP120 neural processor. 6 wake-word slots, ultra-low power.',
+    usecase:'Voice wake-word detection, always-on keyword spotting', price:'~$38',
+    tags:['Voice AI','Wake-word','NDP120','BLE','Ultra-low power'], pinout:'Nicla', w:22.5, h:22.5 },
+
+  { id:'nicla-sense-env', name:'Arduino Nicla Sense Env', cat:'pro', year:2024, color:'#f472b6',
+    mcu:'Renesas RA2E1 + STHS34PF80', speed:'48 MHz', flash:'256 KB', sram:'16 KB', eeprom:'8 KB',
+    voltage:'3.3V', digital:4, analog:2, pwm:2, serial:'1', usb:'None (I2C expansion)',
+    special:'Standalone environmental sensing: STTS22H temp, HS4001 humidity, ZMOD4510 outdoor air quality, IR presence.',
+    usecase:'Air quality monitoring, smart buildings, HVAC control', price:'~$22',
+    tags:['Air quality','IR presence','Environmental','22.5mm'], pinout:'Nicla', w:22.5, h:22.5 },
+
+  // ══════════════ GIGA / OPTA ══════════════
+  { id:'giga-r1', name:'Arduino Giga R1 WiFi', cat:'pro mega', year:2022, color:'#a78bfa',
+    mcu:'STM32H747XI (Cortex-M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB + 16 MB QSPI', sram:'1 MB', eeprom:'None',
+    voltage:'3.3V', digital:76, analog:12, pwm:12, serial:'4', usb:'USB-C',
+    special:'Mega form factor with Portenta power. 76 digital pins, 480MHz dual-core, WiFi+BLE, audio codec, display port.',
+    usecase:'Advanced robotics, multi-sensor arrays, audio+display', price:'~$66',
+    tags:['480MHz','Dual-core','76 pins','WiFi+BLE','Display'], pinout:'Mega', w:101.6, h:53.4 },
+
+  { id:'opta-wifi', name:'Arduino Opta WiFi', cat:'pro iot', year:2022, color:'#6366f1',
+    mcu:'STM32H747XI (M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'12-24V DIN', digital:4, analog:4, pwm:4, serial:'2', usb:'USB-C',
+    special:'Professional micro-PLC in DIN-rail enclosure. 24V I/O, WiFi+BLE+Ethernet, RS485, IEC 61131-3.',
+    usecase:'Factory automation, SCADA, industrial PLC replacement', price:'~$180',
+    tags:['PLC','DIN rail','24V','Ethernet','RS485'], pinout:'Opta', w:76, h:58 },
+
+  { id:'opta-rs485', name:'Arduino Opta RS485', cat:'pro', year:2022, color:'#6366f1',
+    mcu:'STM32H747XI (M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'12-24V DIN', digital:4, analog:4, pwm:4, serial:'2', usb:'USB-C',
+    special:'Opta with RS485 only (no WiFi/BLE). Lower cost wired-only PLC for Modbus RTU environments.',
+    usecase:'Modbus RTU/TCP factory networks, wired industrial control', price:'~$140',
+    tags:['PLC','DIN rail','RS485','Modbus','24V'], pinout:'Opta', w:76, h:58 },
+
+  { id:'opta-lite', name:'Arduino Opta Lite', cat:'pro', year:2023, color:'#6366f1',
+    mcu:'STM32H747XI (M7@480MHz + M4@240MHz)', speed:'480 MHz', flash:'2 MB', sram:'1 MB', eeprom:'None',
+    voltage:'12-24V DIN', digital:4, analog:4, pwm:4, serial:'1', usb:'USB-C',
+    special:'Entry-level Opta without RS485/Ethernet/WiFi. Still has DIN-rail, 24V I/O and full dual-core at lowest Opta price.',
+    usecase:'Budget industrial control, DIN rail deployment', price:'~$99',
+    tags:['PLC','DIN rail','Entry-level','24V'], pinout:'Opta', w:76, h:58 },
+
+  // ══════════════ EDUCATION ══════════════
+  { id:'science-kit', name:'Arduino Science Kit Physics Lab', cat:'education', year:2019, color:'#10b981',
+    mcu:'ATSAMD21 (via Nano 33 IoT socket)', speed:'48 MHz', flash:'256 KB', sram:'32 KB', eeprom:'None',
+    voltage:'3.3V', digital:'via Nano socket', analog:'via Nano socket', pwm:8, serial:'1', usb:'Micro-USB',
+    special:'Designed with Google. Physics experiment kit: motion, light, magnetism sensors + Arduino Science Journal app.',
+    usecase:'STEM education, physics labs, classroom experiments', price:'~$97',
+    tags:['Education','Google','Physics','Science Journal'], pinout:'Nano', w:45, h:18 },
+
+  { id:'alvik', name:'Arduino Alvik (Robot)', cat:'education', year:2024, color:'#10b981',
+    mcu:'STM32 (via Nano ESP32)', speed:'240 MHz', flash:'16 MB', sram:'512 KB', eeprom:'None',
+    voltage:'3.7V LiPo', digital:'robot I/O', analog:'robot sensors', pwm:8, serial:'2', usb:'USB-C',
+    special:'Educational robot kit with Nano ESP32 brain. Line following, ultrasonic, IMU, RGB LEDs, Bluetooth.',
+    usecase:'STEM robotics education, programming courses', price:'~$130',
+    tags:['Robot','Education','Nano ESP32','BLE','LiPo'], pinout:'Nano', w:16, h:16 },
+];;
 
 let compareList = [];
 let activeFilter = 'all';
@@ -7242,44 +8089,37 @@ function renderGrid() {
 
   grid.innerHTML = filtered.map(b => {
     const inCompare = compareList.includes(b.id);
-    return `<div class="model-card reveal" data-id="${b.id}" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.25rem;cursor:pointer;transition:all .2s;position:relative;border-left:3px solid ${b.color}40;"
+    const discontinued = b.price === 'Discontinued';
+    return `<div class="model-card reveal" data-id="${b.id}" style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.1rem;cursor:pointer;transition:all .2s;position:relative;border-left:3px solid ${b.color}40;${discontinued?'opacity:.75;':''}"
       onmouseenter="this.style.borderLeftColor='${b.color}'" onmouseleave="this.style.borderLeftColor='${b.color}40'"
       onclick="showBoardDetail('${b.id}')">
-
-      <!-- Mini board canvas -->
+      ${discontinued?`<div style="position:absolute;top:.5rem;right:.5rem;background:rgba(100,100,100,.3);color:#888;border-radius:20px;padding:.1rem .5rem;font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.05em;">DISCONTINUED</div>`:''}
       <canvas class="model-mini-canvas" data-id="${b.id}" width="80" height="52"
         style="float:right;border-radius:8px;margin-left:.75rem;flex-shrink:0;"></canvas>
-
-      <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:${b.color};text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem;">${b.cat.split(' ')[0]} · ${b.year}</div>
-      <h3 style="margin:0 0 .5rem;font-size:.9rem;color:var(--text);line-height:1.3;">${b.name}</h3>
-      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--muted);margin-bottom:.75rem;">${b.mcu} @ ${b.speed}</div>
-
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-bottom:.75rem;">
-        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.4rem;text-align:center;">
-          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">Flash</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:${b.color};font-weight:700;">${b.flash}</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:${b.color};text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem;">${b.cat.split(' ')[0]} · ${b.year}</div>
+      <h3 style="margin:0 0 .3rem;font-size:.88rem;color:var(--text);line-height:1.3;padding-right:${discontinued?'70px':'0'};">${b.name}</h3>
+      <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--muted);margin-bottom:.6rem;">${b.mcu.split('(')[0].trim()} @ ${b.speed.split(' ')[0]} ${b.speed.split(' ')[1]||''}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.25rem;margin-bottom:.6rem;">
+        <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:.3rem;text-align:center;">
+          <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);">Flash</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:${b.color};font-weight:700;">${b.flash}</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.4rem;text-align:center;">
-          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">SRAM</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:${b.color};font-weight:700;">${b.sram}</div>
+        <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:.3rem;text-align:center;">
+          <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);">SRAM</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:${b.color};font-weight:700;">${b.sram}</div>
         </div>
-        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:.4rem;text-align:center;">
-          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);">I/O</div>
-          <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:${b.color};font-weight:700;">${b.digital}</div>
+        <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:.3rem;text-align:center;">
+          <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);">I/O</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:${b.color};font-weight:700;">${typeof b.digital === 'number' ? b.digital : '—'}</div>
         </div>
       </div>
-
-      <p style="font-size:.78rem;color:var(--muted);margin:0 0 .75rem;line-height:1.5;">${b.special}</p>
-
-      <div style="display:flex;flex-wrap:wrap;gap:.25rem;margin-bottom:.75rem;">
-        ${b.tags.map(t=>`<span style="background:${b.color}15;border:1px solid ${b.color}30;color:${b.color};border-radius:20px;padding:.15rem .5rem;font-family:'Space Mono',monospace;font-size:.6rem;">${t}</span>`).join('')}
+      <p style="font-size:.76rem;color:var(--muted);margin:0 0 .6rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">${b.special}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:.2rem;margin-bottom:.6rem;">
+        ${b.tags.slice(0,4).map(t=>`<span style="background:${b.color}15;border:1px solid ${b.color}30;color:${b.color};border-radius:20px;padding:.1rem .4rem;font-family:'Space Mono',monospace;font-size:.58rem;">${t}</span>`).join('')}
       </div>
-
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);">${b.price}</span>
-        <button onclick="event.stopPropagation();toggleCompare('${b.id}')" style="background:${inCompare?b.color:'rgba(255,255,255,.06)'};color:${inCompare?'#0a0e1a':'var(--muted)'};border:1px solid ${inCompare?b.color:'rgba(255,255,255,.1)'};border-radius:8px;padding:.25rem .75rem;font-family:'Space Mono',monospace;font-size:.65rem;cursor:pointer;transition:all .2s;" id="cmp-${b.id}">
-          ${inCompare ? '✓ Comparing' : '+ Compare'}
-        </button>
+        <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:${discontinued?'#666':'var(--green)'};">${b.price}</span>
+        ${!discontinued?`<button onclick="event.stopPropagation();toggleCompare('${b.id}')" style="background:${inCompare?b.color:'rgba(255,255,255,.06)'};color:${inCompare?'#0a0e1a':'var(--muted)'};border:1px solid ${inCompare?b.color:'rgba(255,255,255,.1)'};border-radius:8px;padding:.2rem .6rem;font-family:'Space Mono',monospace;font-size:.62rem;cursor:pointer;transition:all .2s;" id="cmp-${b.id}">${inCompare ? '✓ In Compare' : '+ Compare'}</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -7299,72 +8139,97 @@ function renderGrid() {
 }
 
 function drawMiniBoard(canvas, board) {
+  if(!canvas) return;
   const ctx = canvas.getContext('2d');
+  if(!ctx) return;
   const W = canvas.width, H = canvas.height;
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
   ctx.clearRect(0,0,W,H);
 
-  // Board color by category
-  const boardColor = board.cat.includes('classic') ? '#1a6a40' :
-                     board.cat.includes('nano')    ? '#1a2060' :
-                     board.cat.includes('mkr')     ? '#2a1a10' :
-                     board.cat.includes('mega')    ? '#1a5c38' :
-                     board.cat.includes('pro')     ? '#1a0a3a' : '#1a6a40';
-  const accent = board.color;
+  const isNano = board.pinout==='Nano' || board.w < 50;
+  const isMega = board.pinout==='Mega' || board.w > 90;
+  const isMKR  = board.pinout==='MKR';
+  const isLily = board.cat.includes('lily');
 
-  // Scale: standard Uno is 68.6×53.4mm, canvas 80×52
-  const scaleX = Math.min(W * 0.9, (board.w / 68.6) * W * 0.9);
-  const scaleY = Math.min(H * 0.85, (board.h / 53.4) * H * 0.85);
-  const bx = Math.max(2, (W - scaleX) / 2);
-  const by = Math.max(2, (H - scaleY) / 2);
-  const bw = scaleX - 2, bh = scaleY - 2;
+  // Board dimensions on canvas
+  let bw, bh;
+  if(isMega)     { bw=W*0.92; bh=H*0.62; }
+  else if(isNano){ bw=W*0.38; bh=H*0.82; }
+  else if(isMKR) { bw=W*0.5;  bh=H*0.75; }
+  else if(isLily){ bw=Math.min(W,H)*0.8; bh=bw; }
+  else            { bw=W*0.82; bh=H*0.7; }
+  const bx=(W-bw)/2, by=(H-bh)/2;
 
-  // Board body
+  const bColor = board.cat.includes('nano') ? '#1a1f70' :
+                 board.cat.includes('mkr')  ? '#2a1408' :
+                 board.cat.includes('lily') ? '#6a0a6a' :
+                 board.cat.includes('pro')&&!board.cat.includes('classic') ? '#1a0840' : '#1a6040';
+  const accent = board.color || '#00d4ff';
+
+  // PCB fill
   const g = ctx.createLinearGradient(bx,by,bx+bw,by+bh);
-  g.addColorStop(0, hexAlpha(boardColor, 221));
-  g.addColorStop(1, hexAlpha(boardColor, 136));
-  ctx.fillStyle = g;
-  ctx.strokeStyle = accent + '60';
-  ctx.lineWidth = 1.5;
-  // Board shape
-  ctx.beginPath();
-  if(ctx.roundRect) ctx.roundRect(bx,by,bw,bh,4);
-  else ctx.rect(bx,by,bw,bh);
-  ctx.fill(); ctx.stroke();
+  g.addColorStop(0,bColor); g.addColorStop(1,hexAlpha(bColor,150));
+  ctx.fillStyle=g;
+  if(isLily){
+    ctx.strokeStyle=accent+'80'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(bx+bw/2,by+bh/2,bw/2,0,Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    // petal holes
+    for(let k=0;k<6;k++){
+      const a=k/6*Math.PI*2;
+      ctx.fillStyle='#0a0a1a'; ctx.beginPath();
+      ctx.arc(bx+bw/2+Math.cos(a)*bw*0.4,by+bh/2+Math.sin(a)*bh*0.4,bw*0.05,0,Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle='#0a0a1c'; ctx.beginPath(); ctx.arc(bx+bw/2,by+bh/2,bw*0.2,0,Math.PI*2); ctx.fill();
+  } else {
+    ctx.strokeStyle=accent+'60'; ctx.lineWidth=1;
+    const cn=3; 
+    ctx.beginPath();
+    ctx.moveTo(bx+cn,by); ctx.lineTo(bx+bw-cn,by);
+    ctx.arcTo(bx+bw,by,bx+bw,by+cn,cn);
+    ctx.lineTo(bx+bw,by+bh-cn);
+    ctx.arcTo(bx+bw,by+bh,bx+bw-cn,by+bh,cn);
+    ctx.lineTo(bx+cn,by+bh);
+    ctx.arcTo(bx,by+bh,bx,by+bh-cn,cn);
+    ctx.lineTo(bx,by+cn);
+    ctx.arcTo(bx,by,bx+cn,by,cn);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
 
-  // Mounting holes (4 corners)
-  [[bx+3,by+3],[bx+bw-3,by+3],[bx+3,by+bh-3],[bx+bw-3,by+bh-3]].forEach(([hx,hy])=>{
-    ctx.fillStyle='#070b14'; ctx.beginPath(); ctx.arc(hx,hy,2,0,Math.PI*2); ctx.fill();
-  });
+    // Mounting holes
+    [[bx+3,by+3],[bx+bw-3,by+3],[bx+3,by+bh-3],[bx+bw-3,by+bh-3]].forEach(([hx,hy])=>{
+      ctx.fillStyle='#0a1a10'; ctx.beginPath(); ctx.arc(hx,hy,2,0,Math.PI*2); ctx.fill();
+    });
 
-  // Pin headers top
-  ctx.fillStyle = '#c8a020';
-  const pinCount = board.pinout === 'Mega' ? 16 : 8;
-  const pinSpacing = Math.min(5, (bw-10) / pinCount);
-  for(let i=0;i<pinCount;i++) ctx.fillRect(bx+5+i*pinSpacing, by, pinSpacing-1, 3);
+    // USB stub (left)
+    ctx.fillStyle='#555';
+    if(isNano) ctx.fillRect(bx+bw/2-4,by-2,8,3);
+    else       ctx.fillRect(bx-4,by+bh*0.32,5,bh*0.24);
 
-  // Pin headers bottom
-  for(let i=0;i<(board.pinout==='Nano'?8:6);i++) ctx.fillRect(bx+5+i*pinSpacing, by+bh-3, pinSpacing-1, 3);
+    // Main chip
+    const chipW=bw*0.32, chipH=bh*0.38, chipX=bx+bw*0.38, chipY=by+bh*0.28;
+    ctx.fillStyle='#0a0a1c'; ctx.fillRect(chipX,chipY,chipW,chipH);
+    ctx.strokeStyle='#2a2a4a'; ctx.lineWidth=0.5; ctx.strokeRect(chipX,chipY,chipW,chipH);
+    ctx.fillStyle='rgba(255,255,255,.35)'; ctx.font=`${Math.max(4,chipW*0.16)}px monospace`; ctx.textAlign='center';
+    ctx.fillText('MCU',chipX+chipW/2,chipY+chipH/2+2);
 
-  // USB port (left)
-  ctx.fillStyle = '#444';
-  ctx.fillRect(bx-4, by+bh*0.35, 5, bh*0.22);
-  ctx.strokeStyle = '#777'; ctx.lineWidth=0.5; ctx.strokeRect(bx-4, by+bh*0.35, 5, bh*0.22);
+    // Pin headers top
+    const pinCount=isMega?14:8;
+    const pinSpc=Math.min(4.5,(bw-6)/pinCount);
+    ctx.fillStyle='#c8a020';
+    for(let k=0;k<pinCount;k++) ctx.fillRect(bx+3+k*pinSpc,by-1,pinSpc-1,2.5);
+    // Pin headers bottom
+    for(let k=0;k<(isNano?8:6);k++) ctx.fillRect(bx+3+k*pinSpc,by+bh-1.5,pinSpc-1,2.5);
+  }
 
-  // IC chip
-  ctx.fillStyle = '#0d0d22';
-  const chipW = bw * 0.38, chipH = bh * 0.38;
-  const chipX = bx + bw*0.42, chipY = by + bh*0.28;
-  ctx.fillRect(chipX,chipY,chipW,chipH);
-  ctx.strokeStyle = '#2a2a4a'; ctx.lineWidth=0.5; ctx.strokeRect(chipX,chipY,chipW,chipH);
-  ctx.fillStyle = '#ffffff30'; ctx.font = `${Math.max(4,chipW*0.18)}px monospace`;
-  ctx.textAlign='center'; ctx.fillText('MCU',chipX+chipW/2,chipY+chipH/2+2);
-
-  // LEDs
-  ctx.shadowBlur=6; ctx.shadowColor=accent;
-  ctx.fillStyle=accent;
-  ctx.beginPath(); ctx.arc(bx+bw*0.15, by+bh*0.25, 2.5, 0, Math.PI*2); ctx.fill();
+  // Power LED
+  ctx.shadowBlur=4; ctx.shadowColor=accent;
+  ctx.fillStyle=accent; ctx.beginPath();
+  ctx.arc(isLily?bx+bw/2:bx+bw*0.14, isLily?by+bh*0.6:by+bh*0.18, 2,0,Math.PI*2); ctx.fill();
   ctx.shadowBlur=0;
+
+  ctx.restore();
 }
+window.drawMiniBoard = drawMiniBoard;
 window.drawMiniBoard = drawMiniBoard;
 
 function showBoardDetail(id) {
@@ -7422,118 +8287,230 @@ function showBoardDetail(id) {
 window.showBoardDetail = showBoardDetail;
 
 function drawDetailBoard(canvas, board) {
+  if(!canvas) return;
   const ctx = canvas.getContext('2d');
+  if(!ctx) return;
   const W = canvas.width, H = canvas.height;
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
   ctx.clearRect(0,0,W,H);
 
-  // Determine form factor proportions
-  const isNano = board.pinout==='Nano' || board.w < 55;
-  const isMega = board.pinout==='Mega' || board.w > 80;
-  const isMKR  = board.pinout==='MKR';
+  // ── determine form factor ──────────────────────────────────────────
+  const isNano   = board.pinout==='Nano' || board.w < 50;
+  const isMega   = board.pinout==='Mega' || board.w > 90;
+  const isMKR    = board.pinout==='MKR';
+  const isLily   = board.cat.includes('lily');
+  const isPortenta = board.cat.includes('pro') && board.mcu.includes('H7');
 
-  // Board dimensions in canvas
-  const bw = isMega ? W-20 : isNano ? W*0.55 : W-30;
-  const bh = isNano ? H*0.4  : isMKR ? H*0.45 : H*0.7;
-  const bx = (W-bw)/2 + (isNano ? 8 : 0);
-  const by = (H-bh)/2;
+  // ── canvas dimensions for board ───────────────────────────────────
+  let bw, bh;
+  if(isMega)    { bw=W-16; bh=H*0.78; }
+  else if(isNano){ bw=W*0.42; bh=H*0.82; }
+  else if(isMKR) { bw=W*0.52; bh=H*0.78; }
+  else if(isLily){ bw=Math.min(W-20,H-20); bh=bw; }
+  else            { bw=W-24; bh=H*0.72; }
+  const bx=(W-bw)/2, by=(H-bh)/2;
 
-  const bColor = board.cat.includes('nano') ? '#1a2068' :
-                 board.cat.includes('mkr')  ? '#2a1808' :
-                 board.cat.includes('pro') && !board.cat.includes('classic') ? '#1a0840' : '#1a6040';
+  // ── board colour ──────────────────────────────────────────────────
+  const bColor =
+    board.cat.includes('nano')  ? '#1a1f70' :
+    board.cat.includes('mkr')   ? '#2a1408' :
+    board.cat.includes('lily')  ? '#6a0a6a' :
+    board.cat.includes('pro') && !board.cat.includes('classic') ? '#1a0840' :
+    '#1a6040';
   const accent = board.color;
 
-  // Board shape with notched corners
+  // ── PCB gradient & shape ──────────────────────────────────────────
   const g = ctx.createLinearGradient(bx,by,bx+bw,by+bh);
-  g.addColorStop(0, bColor);
-  g.addColorStop(1, hexAlpha(bColor, 136));
+  g.addColorStop(0, bColor); g.addColorStop(1, hexAlpha(bColor,136));
   ctx.fillStyle = g;
-  ctx.beginPath();
-  const cn = 6;
-  ctx.moveTo(bx+cn,by); ctx.lineTo(bx+bw-cn,by);
-  ctx.lineTo(bx+bw,by+cn); ctx.lineTo(bx+bw,by+bh-cn);
-  ctx.lineTo(bx+bw-cn,by+bh); ctx.lineTo(bx+cn,by+bh);
-  ctx.lineTo(bx,by+bh-cn); ctx.lineTo(bx,by+cn);
-  ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = accent + '60'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.strokeStyle = accent+'80'; ctx.lineWidth = 1.5;
+  if(isLily){
+    // Circular LilyPad
+    ctx.beginPath(); ctx.arc(bx+bw/2,by+bh/2,bw/2,0,Math.PI*2);
+    ctx.fill(); ctx.stroke();
+    // Petal holes
+    for(let k=0;k<8;k++){
+      const a=k/8*Math.PI*2, hx=bx+bw/2+Math.cos(a)*bw*0.42, hy=by+bh/2+Math.sin(a)*bh*0.42;
+      ctx.fillStyle='#0a0a1a'; ctx.beginPath(); ctx.arc(hx,hy,bw*0.04,0,Math.PI*2); ctx.fill();
+    }
+    // Center chip
+    ctx.fillStyle='#0a0a1c'; ctx.strokeStyle='#2a2a4a'; ctx.lineWidth=1;
+    const cr=bw*0.18;
+    ctx.beginPath(); ctx.arc(bx+bw/2,by+bh/2,cr,0,Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font=`bold ${Math.round(bw*0.07)}px monospace`; ctx.textAlign='center';
+    ctx.fillText(board.mcu.length>10?board.mcu.substring(0,9)+'…':board.mcu,bx+bw/2,by+bh/2+4);
+  } else {
+    // Rectangular board — notched corners
+    const cn=6;
+    ctx.beginPath();
+    ctx.moveTo(bx+cn,by); ctx.lineTo(bx+bw-cn,by);
+    ctx.arcTo(bx+bw,by,bx+bw,by+cn,cn);
+    ctx.lineTo(bx+bw,by+bh-cn);
+    ctx.arcTo(bx+bw,by+bh,bx+bw-cn,by+bh,cn);
+    ctx.lineTo(bx+cn,by+bh);
+    ctx.arcTo(bx,by+bh,bx,by+bh-cn,cn);
+    ctx.lineTo(bx,by+cn);
+    ctx.arcTo(bx,by,bx+cn,by,cn);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = accent+'60'; ctx.lineWidth=1.5; ctx.stroke();
 
-  // PCB trace lines
-  ctx.strokeStyle = 'rgba(0,200,80,.08)'; ctx.lineWidth=0.5;
-  for(let i=1;i<5;i++){
-    ctx.beginPath(); ctx.moveTo(bx,by+bh*i/5); ctx.lineTo(bx+bw,by+bh*i/5); ctx.stroke();
+    // PCB trace lines (subtle)
+    ctx.strokeStyle='rgba(0,200,80,.06)'; ctx.lineWidth=0.5;
+    for(let n=1;n<6;n++){
+      ctx.beginPath(); ctx.moveTo(bx,by+bh*n/6); ctx.lineTo(bx+bw,by+bh*n/6); ctx.stroke();
+    }
+
+    // Mounting holes (corners)
+    [[bx+5,by+5],[bx+bw-5,by+5],[bx+5,by+bh-5],[bx+bw-5,by+bh-5]].forEach(([hx,hy])=>{
+      ctx.fillStyle='#0a1a10'; ctx.beginPath(); ctx.arc(hx,hy,3,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=accent+'30'; ctx.lineWidth=0.5; ctx.stroke();
+    });
+
+    // ── USB port (Nano = micro-USB top-edge; others = USB-B or USB-C left-edge) ──
+    if(isNano){
+      // Micro-USB on narrow top edge
+      ctx.fillStyle='#555'; ctx.fillRect(bx+bw/2-6,by-4,12,5);
+      ctx.fillStyle='#222'; ctx.fillRect(bx+bw/2-4,by-3,8,4);
+    } else {
+      // USB-B or USB-C on left edge
+      const usbStyle = board.tags.some(t=>t.includes('USB-C')||t.includes('Type-C')) ? 'C' :
+                       board.year >= 2021 ? 'C' : 'B';
+      ctx.fillStyle='#555'; ctx.strokeStyle='#888'; ctx.lineWidth=0.5;
+      ctx.fillRect(bx-7,by+bh*0.3,8,bh*0.28); ctx.strokeRect(bx-7,by+bh*0.3,8,bh*0.28);
+      ctx.fillStyle='#222'; ctx.fillRect(bx-5,by+bh*0.33,6,bh*0.22);
+      // Type label
+      ctx.fillStyle='#666'; ctx.font=`bold ${Math.max(5,bw*0.05)}px monospace`; ctx.textAlign='center';
+      ctx.fillText('USB-'+usbStyle, bx+bw*0.06, by+bh*0.48);
+    }
+
+    // DC barrel jack (not on Nano/MKR/modern boards)
+    if(!isNano && !isMKR && board.year < 2020){
+      ctx.fillStyle='#222'; ctx.beginPath(); ctx.arc(bx-5,by+bh*0.72,7,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#444'; ctx.beginPath(); ctx.arc(bx-5,by+bh*0.72,4.5,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(bx-5,by+bh*0.72,1.8,0,Math.PI*2); ctx.fill();
+    }
+
+    // ── Main MCU chip ──────────────────────────────────────────────────
+    const chipW = isMega ? bw*0.22 : bw*0.32;
+    const chipH = bh*0.38;
+    const chipX = isMega ? bx+bw*0.28 : bx+bw*0.35;
+    const chipY = by+bh*0.28;
+    ctx.fillStyle='#0a0a1c';
+    ctx.fillRect(chipX,chipY,chipW,chipH);
+    ctx.strokeStyle='#2a2a4a'; ctx.lineWidth=1; ctx.strokeRect(chipX,chipY,chipW,chipH);
+    // IC legs
+    const legCount=4, legSpc=chipH*0.16;
+    ctx.fillStyle='#667';
+    for(let k=0;k<legCount;k++){
+      ctx.fillRect(chipX-3,chipY+chipH*0.12+k*legSpc,3,5);
+      ctx.fillRect(chipX+chipW,chipY+chipH*0.12+k*legSpc,3,5);
+    }
+    // Pin 1 mark
+    ctx.fillStyle=accent+'aa'; ctx.beginPath(); ctx.arc(chipX+4,chipY+4,2,0,Math.PI*2); ctx.fill();
+    // Chip label
+    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.textAlign='center';
+    const nameShort=board.mcu.replace('ATmega','ATm').replace('ATSAMD21','SAMD21').replace('nRF52840','nRF52').replace('ESP32-S3','ESP32');
+    ctx.font=`bold ${Math.max(5,chipW*0.13)}px monospace`;
+    ctx.fillText(nameShort.length>12?nameShort.substring(0,11)+'…':nameShort, chipX+chipW/2, chipY+chipH/2+3);
+
+    // ── 16MHz crystal (on classic boards) ─────────────────────────────
+    if(!isMKR && board.speed && parseInt(board.speed)===16){
+      ctx.fillStyle='#c0c0c0'; ctx.strokeStyle='#777'; ctx.lineWidth=0.5;
+      ctx.fillRect(chipX+chipW+8,chipY+chipH*0.1,18,7); ctx.strokeRect(chipX+chipW+8,chipY+chipH*0.1,18,7);
+      ctx.fillStyle='#444'; ctx.font='5px monospace'; ctx.textAlign='center';
+      ctx.fillText('16MHz',chipX+chipW+17,chipY+chipH*0.1+14);
+    }
+
+    // ── Secondary MCU (Mega/boards with 2 chips) ─────────────────────
+    if(isMega){
+      const chip2W=bw*0.18, chip2H=bh*0.25, chip2X=bx+bw*0.62, chip2Y=by+bh*0.3;
+      ctx.fillStyle='#0c0c1e'; ctx.fillRect(chip2X,chip2Y,chip2W,chip2H);
+      ctx.strokeStyle='#2a2a4a'; ctx.lineWidth=0.8; ctx.strokeRect(chip2X,chip2Y,chip2W,chip2H);
+      ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font='5px monospace'; ctx.textAlign='center';
+      ctx.fillText('16U2',chip2X+chip2W/2,chip2Y+chip2H/2+2);
+    }
+
+    // ── WiFi/BT module representation ────────────────────────────────
+    const hasWifi = board.tags.some(t=>t.toLowerCase().includes('wifi')||t.toLowerCase().includes('ble'));
+    if(hasWifi){
+      ctx.fillStyle='#0a0a2a'; ctx.strokeStyle='#00d4ff40'; ctx.lineWidth=0.8;
+      const wx=bx+bw*0.65,wy=by+bh*0.18,ww=bw*0.25,wh=bh*0.2;
+      ctx.fillRect(wx,wy,ww,wh); ctx.strokeRect(wx,wy,ww,wh);
+      ctx.fillStyle='#00d4ff'; ctx.font='5px monospace'; ctx.textAlign='center';
+      ctx.fillText('📶',wx+ww/2,wy+wh/2+3);
+    }
+
+    // ── ICSP header (2×3 dot grid) ────────────────────────────────────
+    if(!isNano && !isMKR){
+      ctx.fillStyle='#1a1a1a'; ctx.fillRect(bx+bw*0.8,by+bh*0.55,bw*0.14,bh*0.22);
+      ctx.fillStyle='#c8a000';
+      for(let row=0;row<2;row++) for(let col=0;col<3;col++){
+        ctx.beginPath();
+        ctx.arc(bx+bw*0.83+col*bw*0.038, by+bh*0.59+row*bh*0.08, 1.8,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // ── Reset button ──────────────────────────────────────────────────
+    ctx.fillStyle='#d0d0c0'; ctx.strokeStyle='#888'; ctx.lineWidth=0.5;
+    ctx.fillRect(bx+bw*0.22,by+bh*0.62,bw*0.1,bh*0.14); ctx.strokeRect(bx+bw*0.22,by+bh*0.62,bw*0.1,bh*0.14);
+    ctx.fillStyle='#b0a080'; ctx.beginPath();
+    ctx.arc(bx+bw*0.27,by+bh*0.69,bw*0.035,0,Math.PI*2); ctx.fill();
+
+    // ── Power LED (ON, green) + L13 LED ──────────────────────────────
+    ctx.shadowBlur=6; ctx.shadowColor='#00ff88';
+    ctx.fillStyle='#00dd66'; ctx.beginPath();
+    ctx.arc(bx+bw*0.1,by+bh*0.18,3,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.fillStyle='rgba(0,220,100,.7)'; ctx.font='5px monospace'; ctx.textAlign='center';
+    ctx.fillText('ON',bx+bw*0.1,by+bh*0.18+10);
+    // L13 LED
+    const l13on = board.year !== undefined; // always show as potential
+    ctx.shadowBlur=5; ctx.shadowColor=accent+'aa';
+    ctx.fillStyle=accent+'cc'; ctx.beginPath();
+    ctx.arc(bx+bw*0.85,by+bh*0.12,3,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.fillStyle=accent+'aa'; ctx.font='5px monospace'; ctx.textAlign='center';
+    ctx.fillText('L',bx+bw*0.85,by+bh*0.12+10);
+
+    // ── Voltage regulator (classic boards) ────────────────────────────
+    if(!isNano && !isMKR){
+      ctx.fillStyle='#1a1a1a'; ctx.strokeStyle='#333'; ctx.lineWidth=0.5;
+      ctx.fillRect(bx+bw*0.06,by+bh*0.72,bw*0.1,bh*0.16); ctx.strokeRect(bx+bw*0.06,by+bh*0.72,bw*0.1,bh*0.16);
+      // legs
+      ctx.fillStyle='#888';
+      [0,0.03,0.07].forEach(o=>ctx.fillRect(bx+bw*(0.07+o),by+bh*0.88,2,bh*0.08));
+      ctx.fillStyle='rgba(255,255,255,.2)'; ctx.font='4px monospace'; ctx.textAlign='center';
+      ctx.fillText('REG',bx+bw*0.11,by+bh*0.81);
+    }
+
+    // ── Pin headers ───────────────────────────────────────────────────
+    const pinCount = isMega ? 18 : isNano ? 8 : 8;
+    const pinW = Math.min(7,(bw-16)/pinCount);
+    // Top pins
+    for(let k=0;k<pinCount;k++){
+      ctx.fillStyle='#1a1a1a'; ctx.fillRect(bx+8+k*(pinW+1.5),by-3,pinW,4);
+      ctx.fillStyle='#c8a020'; ctx.fillRect(bx+9+k*(pinW+1.5),by-2,pinW-2,3);
+    }
+    // Bottom pins (analog / power)
+    const botPins = isMega ? 14 : isNano ? 8 : 8;
+    for(let k=0;k<botPins;k++){
+      ctx.fillStyle='#1a1a1a'; ctx.fillRect(bx+8+k*(pinW+1.5),by+bh-1,pinW,4);
+      ctx.fillStyle='#c8a020'; ctx.fillRect(bx+9+k*(pinW+1.5),by+bh,pinW-2,3);
+    }
+    // Second row for Mega
+    if(isMega){
+      for(let k=0;k<18;k++){
+        ctx.fillStyle='#c8a020'; ctx.fillRect(bx+8+k*(pinW+1.5),by+8,pinW-2,3);
+      }
+    }
+
+    // ── Board name ────────────────────────────────────────────────────
+    ctx.fillStyle='rgba(255,255,255,.18)'; ctx.textAlign='center';
+    ctx.font=`bold ${Math.max(6,bw*0.06)}px monospace`;
+    ctx.fillText(board.name.replace('Arduino ',''), bx+bw/2, by+bh-8);
   }
-
-  // Top pin headers
-  const pinCount = isMega ? 20 : isNano ? 10 : 8;
-  const pinW = Math.min(7, (bw-16)/pinCount);
-  ctx.fillStyle='#c8a020';
-  for(let i=0;i<pinCount;i++) ctx.fillRect(bx+8+i*(pinW+1),by-2,pinW,4);
-
-  // Bottom pin headers
-  for(let i=0;i<(isNano?10:6);i++) ctx.fillRect(bx+8+i*(pinW+1),by+bh-2,pinW,4);
-
-  // USB port (left)
-  ctx.fillStyle='#444';
-  const usbH = bh*0.28, usbY = by+bh*0.36;
-  ctx.fillRect(bx-6, usbY, 8, usbH);
-  ctx.strokeStyle='#888'; ctx.lineWidth=0.5; ctx.strokeRect(bx-6, usbY, 8, usbH);
-  ctx.fillStyle='#1a1a1a'; ctx.fillRect(bx-3, usbY+2, 5, usbH-4);
-
-  // DC jack (if standard form)
-  if(!isNano && !isMKR) {
-    ctx.fillStyle='#222';
-    ctx.beginPath(); ctx.arc(bx-4, by+bh*0.72, 8, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle='#444'; ctx.beginPath(); ctx.arc(bx-4, by+bh*0.72, 5, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(bx-4, by+bh*0.72, 2, 0, Math.PI*2); ctx.fill();
-  }
-
-  // Main IC chip
-  const chipW = bw*0.32, chipH = bh*0.38;
-  const chipX = bx+bw*0.38, chipY = by+bh*0.3;
-  ctx.fillStyle='#0a0a20';
-  ctx.fillRect(chipX,chipY,chipW,chipH);
-  ctx.strokeStyle='#2a2a4a'; ctx.lineWidth=1; ctx.strokeRect(chipX,chipY,chipW,chipH);
-  // Pins on chip sides
-  ctx.fillStyle='#666';
-  for(let i=0;i<4;i++){
-    ctx.fillRect(chipX-3,chipY+chipH*0.15+i*(chipH*0.18),3,5);
-    ctx.fillRect(chipX+chipW,chipY+chipH*0.15+i*(chipH*0.18),3,5);
-  }
-  // Pin1 dot
-  ctx.fillStyle=accent; ctx.beginPath(); ctx.arc(chipX+4,chipY+4,2,0,Math.PI*2); ctx.fill();
-  // Chip label
-  ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='bold 7px monospace'; ctx.textAlign='center';
-  const mcu_short = board.mcu.length > 14 ? board.mcu.substring(0,13)+'…' : board.mcu;
-  ctx.fillText(mcu_short, chipX+chipW/2, chipY+chipH/2+3);
-
-  // Crystal (if classic/mega)
-  if(!isNano && !isMKR) {
-    ctx.fillStyle='#c0c0c0';
-    ctx.fillRect(bx+bw*0.75, by+bh*0.42, 20, 8);
-    ctx.strokeStyle='#888'; ctx.lineWidth=0.5; ctx.strokeRect(bx+bw*0.75, by+bh*0.42, 20, 8);
-    ctx.fillStyle='#555'; ctx.font='5px monospace'; ctx.textAlign='center';
-    ctx.fillText('16MHz', bx+bw*0.75+10, by+bh*0.42+15);
-  }
-
-  // LEDs (power + L13)
-  ctx.shadowBlur=8; ctx.shadowColor='#00ff88';
-  ctx.fillStyle='#00dd66';
-  ctx.beginPath(); ctx.arc(bx+bw*0.13, by+bh*0.2, 3.5, 0, Math.PI*2); ctx.fill();
-  ctx.shadowBlur=0;
-  ctx.fillStyle='rgba(0,220,100,.6)'; ctx.font='5px monospace'; ctx.textAlign='center';
-  ctx.fillText('ON', bx+bw*0.13, by+bh*0.2+10);
-
-  // Special badge for WiFi boards
-  if(board.tags.some(t=>t.includes('WiFi')||t.includes('BLE'))) {
-    ctx.fillStyle = 'rgba(0,212,255,.12)';
-    const bTag = `WiFi+BLE`;
-    ctx.font = 'bold 6px monospace'; ctx.textAlign='right';
-    ctx.fillStyle = '#00d4ff';
-    ctx.fillText('📶', bx+bw-8, by+10);
-  }
-
-  // Board name
-  ctx.fillStyle='rgba(255,255,255,.2)'; ctx.font=`bold ${isNano?5:7}px monospace`; ctx.textAlign='center';
-  ctx.fillText(board.name.replace('Arduino ',''), bx+bw/2, by+bh-6);
+  ctx.restore();
 }
 
 function toggleCompare(id) {
@@ -7569,7 +8546,7 @@ function renderCompare() {
     ['Price','price'], ['USB','usb']
   ];
 
-  table.innerHTML = `<table style="width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.72rem;">
+  table.innerHTML = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;"><table style="width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.72rem;">
     <thead><tr>
       <th style="text-align:left;padding:.4rem .5rem;color:var(--muted);border-bottom:1px solid var(--border);">Spec</th>
       ${bds.map(b=>`<th style="padding:.4rem .5rem;color:${b.color};border-bottom:1px solid var(--border);text-align:center;">${b.name.replace('Arduino ','')}</th>`).join('')}
@@ -7613,6 +8590,8 @@ renderGrid();
   let hovered = null;
 
   function draw() {
+    if(!ctx) return;
+    ctx.save(); ctx.shadowBlur=0;
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle='#070b14'; ctx.fillRect(0,0,W,H);
 
@@ -7686,6 +8665,8 @@ renderGrid();
     });
     ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='7px monospace'; ctx.textAlign='center';
     ctx.fillText('50mm', sbX+25*mm2px, sbY-6);
+  
+    ctx.restore();
   }
 
   draw();
@@ -7981,6 +8962,7 @@ renderGrid();
     ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
   }
   function drawFlowChart(temp,thresh){
+  ctx.save(); ctx.shadowBlur=0; ctx.shadowColor='transparent';
     const W=canvas.width,H=canvas.height;
     ctx.clearRect(0,0,W,H); ctx.fillStyle='#0a0e1a'; ctx.fillRect(0,0,W,H);
     const hot=temp>thresh, YES_COL=hot?'#c0392b':'#27ae60', NO_COL=hot?'#27ae60':'#c0392b';
@@ -8041,7 +9023,8 @@ renderGrid();
     arr(90,184,90,215,'NO',102,205);
     box(20,215,140,30,'else block', '#2a3a4a','#8892b0');
     arr(220,150,320,150,'→','','');
-  }
+  ctx.restore();
+}
   window.updateFlowDemo=function(){
     const temp=parseInt(document.getElementById('tempSlider').value);
     const thresh=parseInt(document.getElementById('threshSlider').value);
@@ -9185,5 +10168,79 @@ function diagnoseError() {
    {pattern:/lvalue required|invalid use of/i,title:'\uD83D\uDD27 Assignment Error',fix:'Used == instead of =, or a literal on the left side.',color:'#ff4757'},
   ].forEach(p=>errorPatterns.push(p));
 })();
+
+// ═══════════════════════════════════════════════
+// NAV: close on link click (mobile) + scroll-active highlighting
+// ═══════════════════════════════════════════════
+(function() {
+  const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.getElementById('navToggle');
+
+  // Close mobile menu when a nav link is clicked
+  if (navLinks) {
+    navLinks.querySelectorAll('a').forEach(function(link) {
+      link.addEventListener('click', function() {
+        navLinks.classList.remove('open');
+        if (navToggle) navToggle.textContent = '☰';
+      });
+    });
+  }
+
+  // Close when clicking outside nav
+  document.addEventListener('click', function(e) {
+    if (navLinks && navLinks.classList.contains('open')) {
+      if (!e.target.closest('nav')) {
+        navLinks.classList.remove('open');
+        if (navToggle) navToggle.textContent = '☰';
+      }
+    }
+  });
+
+  // Scroll-based active link highlighting
+  var sections = [];
+  document.querySelectorAll('section[id]').forEach(function(s) {
+    sections.push({ id: s.id, el: s });
+  });
+
+  var navAnchorMap = {};
+  document.querySelectorAll('.nav-links a[href^="#"]').forEach(function(a) {
+    navAnchorMap[a.getAttribute('href').slice(1)] = a;
+  });
+
+  var ticking = false;
+  function updateActiveNav() {
+    var scrollY = window.scrollY || window.pageYOffset;
+    var winH = window.innerHeight;
+    var best = null, bestTop = -Infinity;
+    sections.forEach(function(s) {
+      var rect = s.el.getBoundingClientRect();
+      var top = rect.top;
+      if (top <= winH * 0.35 && top > bestTop) {
+        bestTop = top;
+        best = s.id;
+      }
+    });
+    // If at very top, use first section
+    if (scrollY < 80 && sections.length) best = sections[0].id;
+    // Highlight
+    Object.keys(navAnchorMap).forEach(function(id) {
+      var a = navAnchorMap[id];
+      if (id === best) a.classList.add('active');
+      else a.classList.remove('active');
+    });
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(updateActiveNav);
+      ticking = true;
+    }
+  }, { passive: true });
+
+  updateActiveNav();
+})();
+
 </script></body>
 </html>
+</div>
